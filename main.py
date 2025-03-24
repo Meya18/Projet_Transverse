@@ -7,7 +7,7 @@ class Game:
         self.running = True
         self.clock = pygame.time.Clock()
         self.player = Player(0, 0)
-        self.background = pygame.image.load("images/fond1.png")  # Charge l'image de fond
+        self.background = pygame.image.load("fond1.png")
         self.background = pygame.transform.scale(self.background, (1000, 600))  # Ajuste la taille
 
     def handle_events(self):
@@ -31,7 +31,7 @@ class Game:
         self.player.move()
 
     def display(self):
-        self.screen.blit(self.background, (0, 0))  # Affiche l'image de fond
+        self.screen.blit(self.background, (0, 0))
         self.player.draw(self.screen)
         pygame.display.flip()
 

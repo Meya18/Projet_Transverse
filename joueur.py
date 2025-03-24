@@ -2,7 +2,7 @@ import pygame
 
 class Player:
     def __init__(self, x, y):
-        self.image = pygame.image.load("images/miouss.jpg")
+        self.image = pygame.image.load("miouss.jpg")
         self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = 5
