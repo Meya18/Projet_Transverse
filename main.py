@@ -7,7 +7,7 @@ class Game:
         self.running = True
         self.clock = pygame.time.Clock()
         self.player = Player(0, 0)
-        self.background = pygame.image.load("fond1.png")
+        self.background = pygame.image.load("images/fond1.png")
         self.background = pygame.transform.scale(self.background, (1000, 600))  # Ajuste la taille
 
     def handle_events(self):
