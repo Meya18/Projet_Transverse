@@ -11,18 +11,44 @@ background = pygame.image.load("images/fond1.png")
 background = pygame.transform.scale(background, (1000, 600))
 debut_image = pygame.image.load("images/debut.jpeg")
 debut_image = pygame.transform.scale(debut_image, (1000, 600))
-bouton_debut = pygame.image.load("images/bouton_debut.webp")
+choix_perso_image = pygame.image.load("images/choix_perso.jpg")
+choix_perso_image = pygame.transform.scale(choix_perso_image, (1000, 600))
+
+# Chargement des personnages
+persos = {
+    "james": pygame.image.load("images/james.png"),
+    "jessie": pygame.image.load("images/jessie.jpg"),
+    "miaouss": pygame.image.load("images/miaouss.jpg")
+}
+
+# Taille par défaut des personnages
+perso_sizes = {
+    "james": {"width": 200, "height": 350},
+    "jessie": {"width": 200, "height": 350},
+    "miaouss": {"width": 200, "height": 200}
+}
+
+# Redimensionnement des personnages
+for key in persos:
+    persos[key] = pygame.transform.scale(persos[key], (perso_sizes[key]["width"], perso_sizes[key]["height"]))
+
+# Positions des personnages
+perso_positions = {
+    "james": (225, 325),
+    "jessie": (775, 325),
+    "miaouss": (500, 400)
+}
 
 # Bouton du début
 bouton_largeur, bouton_hauteur = 300, 150
+bouton_debut = pygame.image.load("images/bouton_debut.webp")
 bouton_debut = pygame.transform.scale(bouton_debut, (bouton_largeur, bouton_hauteur))
 button_rect = bouton_debut.get_rect(center=(500, 500))
 bouton_scale = 1.0
-hovering = False
 
-# Définition du joueur
-player = {"x": 487, "y": 560, "speed": 5, "image": pygame.Surface((25, 25))}
-player["image"].fill((255, 0, 0))
+# Variables pour gérer l'animation des personnages
+perso_scale = {"james": 1.0, "jessie": 1.0, "miaouss": 1.0}
+player_image = None
 
 # Liste des obstacles
 obstacles = [
@@ -42,10 +68,12 @@ obstacles = [
 
 scenes = {
     "debut": {"fond": debut_image, "bouton": bouton_debut},
-    "jeu": {"fond": background, "joueur": player, "obstacles": obstacles}
+    "choix_perso": {"fond": choix_perso_image, "persos": persos},
+    "jeu": {"fond": background, "joueur": None, "obstacles": obstacles}
 }
 
 current_scene = "debut"
+player = {"x": 487, "y": 560, "speed": 5, "image": None}
 
 # Boucle du jeu
 running = True
@@ -56,16 +84,21 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN and current_scene == "debut":
-            if button_rect.collidepoint(event.pos):
-                current_scene = "jeu"
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if current_scene == "debut" and button_rect.collidepoint(event.pos):
+                current_scene = "choix_perso"
+            elif current_scene == "choix_perso":
+                for perso, pos in perso_positions.items():
+                    rect = pygame.Rect(pos[0] - 50, pos[1] - 50, 100, 100)
+                    if rect.collidepoint(event.pos):
+                        player["image"] = pygame.transform.scale(persos[perso], (30, 30))
+                        scenes["jeu"]["joueur"] = player
+                        current_scene = "jeu"
 
     screen.fill((0, 0, 0))
 
     if current_scene == "debut":
         screen.blit(scenes["debut"]["fond"], (0, 0))
-
-        # Gestion de l'effet sur le bouton
         mouse_x, mouse_y = pygame.mouse.get_pos()
         if button_rect.collidepoint(mouse_x, mouse_y):
             if bouton_scale > 0.9:
@@ -73,10 +106,28 @@ while running:
         else:
             if bouton_scale < 1.0:
                 bouton_scale += 0.01
-
-        scaled_bouton = pygame.transform.scale(bouton_debut, (int(bouton_largeur * bouton_scale), int(bouton_hauteur * bouton_scale)))
+        scaled_bouton = pygame.transform.scale(bouton_debut,
+                                               (int(bouton_largeur * bouton_scale), int(bouton_hauteur * bouton_scale)))
         scaled_rect = scaled_bouton.get_rect(center=button_rect.center)
         screen.blit(scaled_bouton, scaled_rect.topleft)
+
+    elif current_scene == "choix_perso":
+        screen.blit(scenes["choix_perso"]["fond"], (0, 0))
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        for perso, pos in perso_positions.items():
+            rect = pygame.Rect(pos[0] - 50, pos[1] - 50, 100, 100)
+            if rect.collidepoint(mouse_x, mouse_y):
+                if perso_scale[perso] > 0.9:
+                    perso_scale[perso] -= 0.01
+            else:
+                if perso_scale[perso] < 1.0:
+                    perso_scale[perso] += 0.01
+            # Changer la taille de l'image en fonction du scale
+            scaled_perso = pygame.transform.scale(persos[perso],
+                                                  (int(perso_sizes[perso]["width"] * perso_scale[perso]),
+                                                   int(perso_sizes[perso]["height"] * perso_scale[perso])))
+            scaled_rect = scaled_perso.get_rect(center=pos)
+            screen.blit(scaled_perso, scaled_rect.topleft)
 
     elif current_scene == "jeu":
         keys = pygame.key.get_pressed()
@@ -94,12 +145,13 @@ while running:
         # Vérification des collisions avec les bords et obstacles
         new_x = player["x"] + dx
         new_y = player["y"] + dy
-        new_rect = pygame.Rect(new_x, new_y, 25, 25)
-        if 0 <= new_x <= 975 and 0 <= new_y <= 575 and not any(new_rect.colliderect(obs) for obs in obstacles):
+        new_rect = pygame.Rect(new_x, new_y, 30, 30)
+        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles):
             player["x"], player["y"] = new_x, new_y
 
         screen.blit(scenes["jeu"]["fond"], (0, 0))
-        screen.blit(player["image"], (player["x"], player["y"]))
+        if player["image"]:
+            screen.blit(player["image"], (player["x"], player["y"]))
 
     pygame.display.flip()
     clock.tick(60)
