@@ -48,9 +48,13 @@ perso_positions = {
     "chouette": (500, 400)
 }
 
-# Police pour les textes
+# Police pour les textes (garde la police par défaut)
 font_titre = pygame.font.SysFont("Arial", 40, bold=True)
 font_nom = pygame.font.SysFont("Arial", 30)
+
+# Couleurs
+blanc = (255, 255, 255)
+noir = (0, 0, 0)
 
 # Bouton du début
 bouton_largeur, bouton_hauteur = 300, 150
@@ -107,7 +111,7 @@ while running:
                         scenes["jeu"]["joueur"] = player
                         current_scene = "jeu"
 
-    screen.fill((0, 0, 0))
+    screen.fill(noir)
 
     if current_scene == "debut":
         screen.blit(scenes["debut"]["fond"], (0, 0))
@@ -125,7 +129,8 @@ while running:
 
     elif current_scene == "choix_perso":
         screen.blit(scenes["choix_perso"]["fond"], (0, 0))
-        titre = font_titre.render("Choisissez votre personnage", True, (255, 255, 255))
+        # Titre en noir
+        titre = font_titre.render("Choisissez votre personnage", True, noir)
         screen.blit(titre, (500 - titre.get_width() // 2, 30))
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -144,9 +149,9 @@ while running:
             scaled_rect = scaled_perso.get_rect(center=pos)
             screen.blit(scaled_perso, scaled_rect.topleft)
 
-            # Affichage du nom sous chaque personnage
+            # Affichage du nom sous chaque personnage en blanc
             nom = {"jessie": "Jessie", "james": "James", "chouette": "Effraie"}[perso]
-            texte_nom = font_nom.render(nom, True, (255, 255, 255))
+            texte_nom = font_nom.render(nom, True, blanc)
             screen.blit(texte_nom, (pos[0] - texte_nom.get_width() // 2, pos[1] + perso_sizes[perso]["height"] // 2))
 
     elif current_scene == "jeu":
@@ -176,4 +181,3 @@ while running:
     clock.tick(60)
 
 pygame.quit()
-
