@@ -6,7 +6,7 @@ pygame.init()
 screen = pygame.display.set_mode((1000, 600))
 pygame.display.set_caption("Jeu Team Rocket")
 
-# Chargement des images
+# Chargement des images de fond
 background = pygame.image.load("images/fond1.png")
 background = pygame.transform.scale(background, (1000, 600))
 debut_image = pygame.image.load("images/debut.jpeg")
@@ -14,30 +14,43 @@ debut_image = pygame.transform.scale(debut_image, (1000, 600))
 choix_perso_image = pygame.image.load("images/choix_perso.jpg")
 choix_perso_image = pygame.transform.scale(choix_perso_image, (1000, 600))
 
-# Chargement des personnages
+# Chargement des personnages pour la sélection
 persos = {
-    "james": pygame.image.load("images/james.png"),
-    "jessie": pygame.image.load("images/jessie.jpg"),
-    "miaouss": pygame.image.load("images/miaouss.jpg")
+    "james": pygame.image.load("images/james_p.png"),
+    "jessie": pygame.image.load("images/jessie_p.png"),
+    "chouette": pygame.image.load("images/chouette_p.png")
+}
+
+# Images pour le personnage sélectionné (utilisé dans la scène de jeu)
+joueur_images = {
+    "james": pygame.image.load("images/james_f.png"),
+    "jessie": pygame.image.load("images/jessie_f.png"),
+    "chouette": pygame.image.load("images/chouette_f.png")
 }
 
 # Taille par défaut des personnages
 perso_sizes = {
     "james": {"width": 200, "height": 350},
     "jessie": {"width": 200, "height": 350},
-    "miaouss": {"width": 200, "height": 200}
+    "chouette": {"width": 200, "height": 200}
 }
 
 # Redimensionnement des personnages
 for key in persos:
     persos[key] = pygame.transform.scale(persos[key], (perso_sizes[key]["width"], perso_sizes[key]["height"]))
+for key in joueur_images:
+    joueur_images[key] = pygame.transform.scale(joueur_images[key], (30, 30))
 
 # Positions des personnages
 perso_positions = {
     "james": (225, 325),
     "jessie": (775, 325),
-    "miaouss": (500, 400)
+    "chouette": (500, 400)
 }
+
+# Police pour les textes
+font_titre = pygame.font.SysFont("Arial", 40, bold=True)
+font_nom = pygame.font.SysFont("Arial", 30)
 
 # Bouton du début
 bouton_largeur, bouton_hauteur = 300, 150
@@ -46,24 +59,24 @@ bouton_debut = pygame.transform.scale(bouton_debut, (bouton_largeur, bouton_haut
 button_rect = bouton_debut.get_rect(center=(500, 500))
 bouton_scale = 1.0
 
-# Variables pour gérer l'animation des personnages
-perso_scale = {"james": 1.0, "jessie": 1.0, "miaouss": 1.0}
+# Variables pour l'animation des personnages
+perso_scale = {"james": 1.0, "jessie": 1.0, "chouette": 1.0}
 player_image = None
 
 # Liste des obstacles
 obstacles = [
-    pygame.Rect(530, 285, 305, 140),  # Maison en bas à droite
-    pygame.Rect(170, 105, 250, 135),  # Maison en haut à gauche
-    pygame.Rect(525, 100, 300, 140),  # Maison en haut à droite
-    pygame.Rect(205, 325, 215, 125),  # Jardin en bas à gauche
-    pygame.Rect(540, 480, 255, 30),  # Barrière en bas à droite
-    pygame.Rect(290, 510, 170, 90),  # Lac en bas au milieu
-    pygame.Rect(0, 0, 500, 60),  # Forêt en haut à gauche
-    pygame.Rect(585, 0, 415, 60),  # Forêt en haut à droite
-    pygame.Rect(0, 0, 80, 600),  # Forêt à gauche
-    pygame.Rect(920, 0, 80, 600),  # Forêt à droite
-    pygame.Rect(80, 575, 155, 25),  # Forêt en bas à gauche
-    pygame.Rect(765, 575, 155, 25)  # Forêt en bas à droite
+    pygame.Rect(530, 285, 305, 140),
+    pygame.Rect(170, 105, 250, 135),
+    pygame.Rect(525, 100, 300, 140),
+    pygame.Rect(205, 325, 215, 125),
+    pygame.Rect(540, 480, 255, 30),
+    pygame.Rect(290, 510, 170, 90),
+    pygame.Rect(0, 0, 500, 60),
+    pygame.Rect(585, 0, 415, 60),
+    pygame.Rect(0, 0, 80, 600),
+    pygame.Rect(920, 0, 80, 600),
+    pygame.Rect(80, 575, 155, 25),
+    pygame.Rect(765, 575, 155, 25)
 ]
 
 scenes = {
@@ -80,7 +93,6 @@ running = True
 clock = pygame.time.Clock()
 
 while running:
-    # Gestion des événements
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -91,7 +103,7 @@ while running:
                 for perso, pos in perso_positions.items():
                     rect = pygame.Rect(pos[0] - 50, pos[1] - 50, 100, 100)
                     if rect.collidepoint(event.pos):
-                        player["image"] = pygame.transform.scale(persos[perso], (30, 30))
+                        player["image"] = joueur_images[perso]
                         scenes["jeu"]["joueur"] = player
                         current_scene = "jeu"
 
@@ -113,6 +125,9 @@ while running:
 
     elif current_scene == "choix_perso":
         screen.blit(scenes["choix_perso"]["fond"], (0, 0))
+        titre = font_titre.render("Choisissez votre personnage", True, (255, 255, 255))
+        screen.blit(titre, (500 - titre.get_width() // 2, 30))
+
         mouse_x, mouse_y = pygame.mouse.get_pos()
         for perso, pos in perso_positions.items():
             rect = pygame.Rect(pos[0] - 50, pos[1] - 50, 100, 100)
@@ -122,12 +137,17 @@ while running:
             else:
                 if perso_scale[perso] < 1.0:
                     perso_scale[perso] += 0.01
-            # Changer la taille de l'image en fonction du scale
+
             scaled_perso = pygame.transform.scale(persos[perso],
                                                   (int(perso_sizes[perso]["width"] * perso_scale[perso]),
                                                    int(perso_sizes[perso]["height"] * perso_scale[perso])))
             scaled_rect = scaled_perso.get_rect(center=pos)
             screen.blit(scaled_perso, scaled_rect.topleft)
+
+            # Affichage du nom sous chaque personnage
+            nom = {"jessie": "Jessie", "james": "James", "chouette": "Effraie"}[perso]
+            texte_nom = font_nom.render(nom, True, (255, 255, 255))
+            screen.blit(texte_nom, (pos[0] - texte_nom.get_width() // 2, pos[1] + perso_sizes[perso]["height"] // 2))
 
     elif current_scene == "jeu":
         keys = pygame.key.get_pressed()
@@ -142,7 +162,6 @@ while running:
         if keys[pygame.K_DOWN]:
             dy = player["speed"]
 
-        # Vérification des collisions avec les bords et obstacles
         new_x = player["x"] + dx
         new_y = player["y"] + dy
         new_rect = pygame.Rect(new_x, new_y, 30, 30)
@@ -157,3 +176,4 @@ while running:
     clock.tick(60)
 
 pygame.quit()
+
