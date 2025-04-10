@@ -58,7 +58,7 @@ noir = (0, 0, 0)
 
 # Bouton du début
 bouton_largeur, bouton_hauteur = 300, 150
-bouton_debut = pygame.image.load("images/bouton_debut.webp")
+bouton_debut = pygame.image.load("images/bouton_debut.png")
 bouton_debut = pygame.transform.scale(bouton_debut, (bouton_largeur, bouton_hauteur))
 button_rect = bouton_debut.get_rect(center=(500, 500))
 bouton_scale = 1.0
