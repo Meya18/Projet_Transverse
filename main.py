@@ -30,8 +30,8 @@ joueur_images = {
 
 # Taille par défaut des personnages
 perso_sizes = {
-    "james": {"width": 200, "height": 350},
-    "jessie": {"width": 200, "height": 350},
+    "james": {"width": 200, "height": 200},
+    "jessie": {"width": 200, "height": 200},
     "chouette": {"width": 200, "height": 200}
 }
 
@@ -43,8 +43,8 @@ for key in joueur_images:
 
 # Positions des personnages
 perso_positions = {
-    "james": (225, 325),
-    "jessie": (775, 325),
+    "james": (225, 400),
+    "jessie": (775, 400),
     "chouette": (500, 400)
 }
 
