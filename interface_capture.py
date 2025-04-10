@@ -159,7 +159,7 @@ def interface_capture(surface):
     balle = Balle("images/pokeball.png", (100, HEIGHT - 100))
     cible = Cible("images/carabaffe.png", (800, 400))
     chargeur = Chargeur()
-    fond = pygame.transform.scale(pygame.image.load("images/fond1.png").convert(), (WIDTH, HEIGHT))
+    fond = pygame.transform.scale(pygame.image.load("images/fond_combat.jpg").convert(), (WIDTH, HEIGHT))
 
     clock = pygame.time.Clock()
     running = True
