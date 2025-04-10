@@ -156,10 +156,10 @@ class Chargeur:
 
 
 def interface_capture(surface):
-    balle = Balle("balle.png", (100, HEIGHT - 100))
-    cible = Cible("cible.png", (800, 400))
+    balle = Balle("images/pokeball.png", (100, HEIGHT - 100))
+    cible = Cible("images/carabaffe.png", (800, 400))
     chargeur = Chargeur()
-    fond = pygame.transform.scale(pygame.image.load("fond1.png").convert(), (WIDTH, HEIGHT))
+    fond = pygame.transform.scale(pygame.image.load("images/fond1.png").convert(), (WIDTH, HEIGHT))
 
     clock = pygame.time.Clock()
     running = True
