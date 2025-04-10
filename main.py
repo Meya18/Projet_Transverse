@@ -1,5 +1,5 @@
 import pygame
-
+from interface_capture import *
 pygame.init()
 
 # Définition de la fenêtre
@@ -166,7 +166,8 @@ while running:
             dy = -player["speed"]
         if keys[pygame.K_DOWN]:
             dy = player["speed"]
-
+        if keys[pygame.K_SPACE]:
+            interface_capture(screen)
         new_x = player["x"] + dx
         new_y = player["y"] + dy
         new_rect = pygame.Rect(new_x, new_y, 30, 30)
