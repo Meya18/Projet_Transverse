@@ -21,7 +21,7 @@ persos = {
     "chouette": pygame.image.load("images/chouette_p.png")
 }
 
-# Images pour le personnage sélectionné (utilisé dans la scène de jeu)
+# Images pour le personnage sélectionné
 joueur_images = {
     "james": pygame.image.load("images/james_f.png"),
     "jessie": pygame.image.load("images/jessie_f.png"),
@@ -30,9 +30,9 @@ joueur_images = {
 
 # Taille par défaut des personnages
 perso_sizes = {
-    "james": {"width": 200, "height": 200},
-    "jessie": {"width": 200, "height": 200},
-    "chouette": {"width": 200, "height": 200}
+    "james": {"width": 300, "height": 300},
+    "jessie": {"width": 300, "height": 300},
+    "chouette": {"width": 300, "height": 300}
 }
 
 # Redimensionnement des personnages
@@ -43,12 +43,12 @@ for key in joueur_images:
 
 # Positions des personnages
 perso_positions = {
-    "james": (225, 400),
-    "jessie": (775, 400),
-    "chouette": (500, 400)
+    "james": (225, 275),
+    "jessie": (775, 275),
+    "chouette": (500, 275)
 }
 
-# Police pour les textes (garde la police par défaut)
+# Police pour les textes
 font_titre = pygame.font.SysFont("Arial", 40, bold=True)
 font_nom = pygame.font.SysFont("Arial", 30)
 
