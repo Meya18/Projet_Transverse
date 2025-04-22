@@ -1,6 +1,5 @@
 import pygame
 from interface_capture import *
-import time
 
 pygame.init()
 
@@ -11,12 +10,12 @@ pygame.display.set_caption("Jeu Team Rocket")
 # Chargement des images de fond
 background = pygame.image.load("images/fond1.png")
 background = pygame.transform.scale(background, (1000, 600))
+fond2_image = pygame.image.load("images/fond2.png")
+fond2_image = pygame.transform.scale(fond2_image, (1000, 600))
 debut_image = pygame.image.load("images/debut.jpeg")
 debut_image = pygame.transform.scale(debut_image, (1000, 600))
 choix_perso_image = pygame.image.load("images/choix_perso.jpg")
 choix_perso_image = pygame.transform.scale(choix_perso_image, (1000, 600))
-fond2_image = pygame.image.load("images/fond2.png")
-fond2_image = pygame.transform.scale(fond2_image, (1000, 600))  # Redimensionner fond2 pour correspondre à la taille de la fenêtre
 
 # Chargement des personnages pour la sélection
 persos = {
@@ -71,7 +70,7 @@ bouton_scale = 1.0
 perso_scale = {"james": 1.0, "jessie": 1.0, "chouette": 1.0}
 player_image = None
 
-# Liste des obstacles
+# Liste des obstacles de fond1
 obstacles = [
     pygame.Rect(530, 285, 305, 140),
     pygame.Rect(170, 105, 250, 135),
@@ -87,28 +86,18 @@ obstacles = [
     pygame.Rect(765, 575, 155, 25)
 ]
 
+# Rectangle invisible pour changer de scène
+passage_rect = pygame.Rect(500, 0, 90, 30)
+
 scenes = {
     "debut": {"fond": debut_image, "bouton": bouton_debut},
     "choix_perso": {"fond": choix_perso_image, "persos": persos},
     "jeu": {"fond": background, "joueur": None, "obstacles": obstacles},
-    "fond2": {"fond": fond2_image}  # Ajout de la scène fond2
+    "fond2": {"fond": fond2_image}
 }
 
 current_scene = "debut"
 player = {"x": 487, "y": 560, "speed": 5, "image": None}
-
-# Rectangle invisible pour la collision (juste un espace cliquable)
-transition_rect = pygame.Rect(500, 0, 90, 30)  # Rectangle centré en haut
-
-# Fonction de fondu
-def fade_in(screen, color=(0, 0, 0), speed=3):
-    fade_surface = pygame.Surface((1000, 600))
-    fade_surface.fill(color)
-    for alpha in range(0, 256, speed):
-        fade_surface.set_alpha(alpha)
-        screen.blit(fade_surface, (0, 0))
-        pygame.display.flip()
-        time.sleep(0.01)
 
 # Boucle du jeu
 running = True
@@ -147,7 +136,6 @@ while running:
 
     elif current_scene == "choix_perso":
         screen.blit(scenes["choix_perso"]["fond"], (0, 0))
-        # Titre en noir
         titre = font_titre.render("Choisissez votre personnage", True, noir)
         screen.blit(titre, (500 - titre.get_width() // 2, 30))
 
@@ -167,7 +155,6 @@ while running:
             scaled_rect = scaled_perso.get_rect(center=pos)
             screen.blit(scaled_perso, scaled_rect.topleft)
 
-            # Affichage du nom sous chaque personnage en blanc
             nom = {"jessie": "Jessie", "james": "James", "chouette": "Effraie"}[perso]
             texte_nom = font_nom.render(nom, True, blanc)
             screen.blit(texte_nom, (pos[0] - texte_nom.get_width() // 2, pos[1] + perso_sizes[perso]["height"] // 2))
@@ -175,7 +162,32 @@ while running:
     elif current_scene == "jeu":
         keys = pygame.key.get_pressed()
         dx, dy = 0, 0
+        if keys[pygame.K_LEFT]:
+            dx = -player["speed"]
+        if keys[pygame.K_RIGHT]:
+            dx = player["speed"]
+        if keys[pygame.K_UP]:
+            dy = -player["speed"]
+        if keys[pygame.K_DOWN]:
+            dy = player["speed"]
+        new_x = player["x"] + dx
+        new_y = player["y"] + dy
+        new_rect = pygame.Rect(new_x, new_y, 30, 30)
+        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles):
+            player["x"], player["y"] = new_x, new_y
 
+        screen.blit(scenes["jeu"]["fond"], (0, 0))
+
+        if passage_rect.colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
+            player["x"], player["y"] = 500, 300
+            current_scene = "fond2"
+
+        if player["image"]:
+            screen.blit(player["image"], (player["x"], player["y"]))
+
+    elif current_scene == "fond2":
+        keys = pygame.key.get_pressed()
+        dx, dy = 0, 0
         if keys[pygame.K_LEFT]:
             dx = -player["speed"]
         if keys[pygame.K_RIGHT]:
@@ -187,29 +199,10 @@ while running:
         if keys[pygame.K_SPACE]:
             interface_capture(screen)
 
-        new_x = player["x"] + dx
-        new_y = player["y"] + dy
-        new_rect = pygame.Rect(new_x, new_y, 30, 30)
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles):
-            player["x"], player["y"] = new_x, new_y
+        player["x"] += dx
+        player["y"] += dy
 
-        screen.blit(scenes["jeu"]["fond"], (0, 0))
-
-        # Affichage du rectangle invisible pour la collision
-        transition_rect_alpha = pygame.Surface(transition_rect.size)
-        transition_rect_alpha.set_alpha(0)  # Rendre le rectangle invisible
-        screen.blit(transition_rect_alpha, transition_rect.topleft)
-
-        # Vérifier si le personnage entre en collision avec le rectangle pour changer de scène
-        if new_rect.colliderect(transition_rect):
-            fade_in(screen)  # Transition de fondu
-            current_scene = "fond2"  # Passage à la scène fond2
-
-        if player["image"]:
-            screen.blit(player["image"], (player["x"], player["y"]))
-
-    elif current_scene == "fond2":
-        screen.blit(scenes["fond2"]["fond"], (0, 0))  # Affichage de fond2 adapté à la taille de l'écran
+        screen.blit(scenes["fond2"]["fond"], (0, 0))
         if player["image"]:
             screen.blit(player["image"], (player["x"], player["y"]))
 
@@ -217,3 +210,5 @@ while running:
     clock.tick(60)
 
 pygame.quit()
+
+
