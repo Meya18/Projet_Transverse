@@ -98,7 +98,11 @@ obstacles_fond2 = [
     pygame.Rect(40, 60, 30, 30),
     pygame.Rect(0, 190, 10, 410),
     pygame.Rect(10, 425, 55, 175),
-    pygame.Rect(65, 545, 175, 55)
+    pygame.Rect(65, 545, 175, 55),
+    pygame.Rect(480, 545, 520, 55),
+    pygame.Rect(715, 485, 285, 60),
+    pygame.Rect(830, 425, 170, 60),
+    pygame.Rect(945, 360, 55, 65)
 ]
 
 # Rectangle invisible pour changer de scène
@@ -182,7 +186,7 @@ while running:
             player["x"], player["y"] = new_x, new_y
         screen.blit(scenes["jeu"]["fond"], (0, 0))
         if passage_rect.colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 487, 560
+            player["x"], player["y"] = 400, 560
             current_scene = "fond2"
         if player["image"]:
             screen.blit(player["image"], (player["x"], player["y"]))
