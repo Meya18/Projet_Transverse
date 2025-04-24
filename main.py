@@ -31,47 +31,46 @@ joueur_images = {
     "chouette": pygame.image.load("images/chouette_f.png")
 }
 
-# Taille par défaut des personnages
+# Taille des personnages
 perso_sizes = {
     "james": {"width": 300, "height": 300},
     "jessie": {"width": 300, "height": 300},
     "chouette": {"width": 300, "height": 300}
 }
 
-# Redimensionnement des personnages
+# Redimensionnement
 for key in persos:
     persos[key] = pygame.transform.scale(persos[key], (perso_sizes[key]["width"], perso_sizes[key]["height"]))
 for key in joueur_images:
     joueur_images[key] = pygame.transform.scale(joueur_images[key], (30, 30))
 
-# Positions des personnages
+# Positions personnages sélection
 perso_positions = {
     "james": (225, 275),
     "jessie": (775, 275),
     "chouette": (500, 275)
 }
 
-# Police pour les textes
+# Police
 font_titre = pygame.font.SysFont("Arial", 40, bold=True)
 font_nom = pygame.font.SysFont("Arial", 30)
 
 # Couleurs
 blanc = (255, 255, 255)
 noir = (0, 0, 0)
-rouge = (255, 0, 0)
 
-# Bouton du début
+# Bouton début
 bouton_largeur, bouton_hauteur = 300, 150
 bouton_debut = pygame.image.load("images/bouton_debut.png")
 bouton_debut = pygame.transform.scale(bouton_debut, (bouton_largeur, bouton_hauteur))
 button_rect = bouton_debut.get_rect(center=(500, 500))
 bouton_scale = 1.0
 
-# Variables pour l'animation des personnages
+# Variables d'animation sélection
 perso_scale = {"james": 1.0, "jessie": 1.0, "chouette": 1.0}
 player_image = None
 
-# Liste des obstacles de fond1
+# Obstacles fond1
 obstacles = [
     pygame.Rect(530, 285, 305, 140),
     pygame.Rect(170, 105, 250, 135),
@@ -87,9 +86,8 @@ obstacles = [
     pygame.Rect(765, 575, 155, 25)
 ]
 
-# Obstacles pour fond2
+# Obstacles fond2
 obstacles_fond2 = [
-    # (position: longueur, hauteur, taille: longueur, hauteur)
     pygame.Rect(0, 0, 1000, 60),
     pygame.Rect(710, 60, 290, 155),
     pygame.Rect(940, 215, 60, 85),
@@ -115,9 +113,10 @@ obstacles_fond2 = [
     pygame.Rect(544, 120, 20, 150)
 ]
 
-# Rectangle invisible pour changer de scène
+# Rectangle passage de scène
 passage_rect = pygame.Rect(500, 0, 90, 30)
 
+# Scènes
 scenes = {
     "debut": {"fond": debut_image, "bouton": bouton_debut},
     "choix_perso": {"fond": choix_perso_image, "persos": persos},
@@ -208,19 +207,16 @@ while running:
         if keys[pygame.K_RIGHT]: dx = player["speed"]
         if keys[pygame.K_UP]: dy = -player["speed"]
         if keys[pygame.K_DOWN]: dy = player["speed"]
-        if keys[pygame.K_SPACE]: interface_capture(screen)
         new_x = player["x"] + dx
         new_y = player["y"] + dy
         new_rect = pygame.Rect(new_x, new_y, 30, 30)
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in scenes["fond2"]["obstacles"]):
+        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_fond2):
             player["x"], player["y"] = new_x, new_y
         screen.blit(scenes["fond2"]["fond"], (0, 0))
-        for rect in scenes["fond2"]["obstacles"]:
-            pygame.draw.rect(screen, rouge, rect)  # Affiche les rectangles obstacles en rouge
         if player["image"]:
             screen.blit(player["image"], (player["x"], player["y"]))
 
-    pygame.display.flip()
+    pygame.display.update()
     clock.tick(60)
 
 pygame.quit()
