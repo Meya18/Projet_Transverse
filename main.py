@@ -102,7 +102,17 @@ obstacles_fond2 = [
     pygame.Rect(480, 545, 520, 55),
     pygame.Rect(715, 485, 285, 60),
     pygame.Rect(830, 425, 170, 60),
-    pygame.Rect(945, 360, 55, 65)
+    pygame.Rect(945, 360, 55, 65),
+    pygame.Rect(305, 205, 110, 190),
+    pygame.Rect(415, 175, 65, 190),
+    pygame.Rect(480, 235, 60, 190),
+    pygame.Rect(540, 300, 50, 125),
+    pygame.Rect(160, 390, 55, 65),
+    pygame.Rect(220, 420, 50, 65),
+    pygame.Rect(710, 275, 30, 30),
+    pygame.Rect(10, 200, 60, 15),
+    pygame.Rect(130, 200, 175, 15),
+    pygame.Rect(544, 120, 20, 150)
 ]
 
 # Rectangle invisible pour changer de scène
