@@ -58,6 +58,7 @@ font_nom = pygame.font.SysFont("Arial", 30)
 # Couleurs
 blanc = (255, 255, 255)
 noir = (0, 0, 0)
+bleu = (0, 0, 255)  # Couleur du carré bleu
 
 # Bouton début
 bouton_largeur, bouton_hauteur = 300, 150
@@ -113,6 +114,23 @@ obstacles_fond2 = [
     pygame.Rect(544, 120, 20, 150)
 ]
 
+capture_fond2 = [
+    # pos longueur hauteur taille longueur hauteur
+    pygame.Rect(160, 460, 25, 25),
+    pygame.Rect(190, 520, 25, 25),
+    pygame.Rect(280, 575, 25, 25),
+    pygame.Rect(100, 310, 25, 25),
+    pygame.Rect(220, 215, 25, 25),
+    pygame.Rect(15, 370, 25, 25),
+    pygame.Rect(425, 370, 25, 25),
+    pygame.Rect(365, 430, 25, 25),
+    pygame.Rect(450, 460, 25, 25),
+    pygame.Rect(680, 65, 25, 25),
+    pygame.Rect(680, 155, 25, 25),
+    pygame.Rect(595, 95, 25, 25),
+    pygame.Rect(280, 70, 25, 25)
+]
+
 # Rectangle passage de scène
 passage_rect = pygame.Rect(500, 0, 90, 30)
 
@@ -125,7 +143,7 @@ scenes = {
 }
 
 current_scene = "debut"
-player = {"x": 487, "y": 560, "speed": 5, "image": None}
+player = {"x": 487, "y": 560, "speed": 4, "image": None}
 
 # Boucle du jeu
 running = True
@@ -175,6 +193,7 @@ while running:
                 if perso_scale[perso] < 1.0:
                     perso_scale[perso] += 0.01
             scaled_perso = pygame.transform.scale(persos[perso], (int(perso_sizes[perso]["width"] * perso_scale[perso]), int(perso_sizes[perso]["height"] * perso_scale[perso])))
+
             scaled_rect = scaled_perso.get_rect(center=pos)
             screen.blit(scaled_perso, scaled_rect.topleft)
             nom = {"jessie": "Jessie", "james": "James", "chouette": "Effraie"}[perso]
@@ -184,39 +203,66 @@ while running:
     elif current_scene == "jeu":
         keys = pygame.key.get_pressed()
         dx, dy = 0, 0
-        if keys[pygame.K_LEFT]: dx = -player["speed"]
-        if keys[pygame.K_RIGHT]: dx = player["speed"]
-        if keys[pygame.K_UP]: dy = -player["speed"]
-        if keys[pygame.K_DOWN]: dy = player["speed"]
+
+        # Direction unique
+        if keys[pygame.K_LEFT]:
+            dx = -player["speed"]
+        elif keys[pygame.K_RIGHT]:
+            dx = player["speed"]
+        elif keys[pygame.K_UP]:
+            dy = -player["speed"]
+        elif keys[pygame.K_DOWN]:
+            dy = player["speed"]
+
         new_x = player["x"] + dx
         new_y = player["y"] + dy
         new_rect = pygame.Rect(new_x, new_y, 30, 30)
+
         if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles):
             player["x"], player["y"] = new_x, new_y
+
         screen.blit(scenes["jeu"]["fond"], (0, 0))
+
         if passage_rect.colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
             player["x"], player["y"] = 400, 560
             current_scene = "fond2"
+
         if player["image"]:
             screen.blit(player["image"], (player["x"], player["y"]))
 
     elif current_scene == "fond2":
         keys = pygame.key.get_pressed()
         dx, dy = 0, 0
-        if keys[pygame.K_LEFT]: dx = -player["speed"]
-        if keys[pygame.K_RIGHT]: dx = player["speed"]
-        if keys[pygame.K_UP]: dy = -player["speed"]
-        if keys[pygame.K_DOWN]: dy = player["speed"]
+
+        # Direction unique
+        if keys[pygame.K_LEFT]:
+            dx = -player["speed"]
+        elif keys[pygame.K_RIGHT]:
+            dx = player["speed"]
+        elif keys[pygame.K_UP]:
+            dy = -player["speed"]
+        elif keys[pygame.K_DOWN]:
+            dy = player["speed"]
+        elif keys[pygame.K_SPACE]:
+            interface_capture(screen)
+
         new_x = player["x"] + dx
         new_y = player["y"] + dy
         new_rect = pygame.Rect(new_x, new_y, 30, 30)
+
         if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_fond2):
             player["x"], player["y"] = new_x, new_y
+
         screen.blit(scenes["fond2"]["fond"], (0, 0))
+
+        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and any(new_rect.colliderect(obs) for obs in capture_fond2):
+            interface_capture(screen)
+
         if player["image"]:
             screen.blit(player["image"], (player["x"], player["y"]))
 
-    pygame.display.update()
+    pygame.display.flip()
     clock.tick(60)
 
 pygame.quit()
+
