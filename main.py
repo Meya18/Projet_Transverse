@@ -116,19 +116,19 @@ obstacles_fond2 = [
 
 capture_fond2 = [
     # pos longueur hauteur taille longueur hauteur
-    pygame.Rect(160, 460, 25, 25),
-    pygame.Rect(190, 520, 25, 25),
-    pygame.Rect(280, 575, 25, 25),
-    pygame.Rect(100, 310, 25, 25),
-    pygame.Rect(220, 215, 25, 25),
-    pygame.Rect(15, 370, 25, 25),
-    pygame.Rect(425, 370, 25, 25),
-    pygame.Rect(365, 430, 25, 25),
-    pygame.Rect(450, 460, 25, 25),
-    pygame.Rect(680, 65, 25, 25),
-    pygame.Rect(680, 155, 25, 25),
-    pygame.Rect(595, 95, 25, 25),
-    pygame.Rect(280, 70, 25, 25)
+    pygame.Rect(160, 460, 5, 5),
+    pygame.Rect(190, 520, 5, 5),
+    pygame.Rect(280, 575, 5, 5),
+    pygame.Rect(100, 310, 5, 5),
+    pygame.Rect(220, 215, 5, 5),
+    pygame.Rect(15, 370, 5, 5),
+    pygame.Rect(425, 370, 5, 5),
+    pygame.Rect(365, 430, 5, 5),
+    pygame.Rect(450, 460, 5, 5),
+    pygame.Rect(680, 65, 5, 5),
+    pygame.Rect(680, 155, 5, 5),
+    pygame.Rect(595, 95, 5, 5),
+    pygame.Rect(280, 70, 5, 5)
 ]
 
 # Rectangle passage de scène
