@@ -115,7 +115,6 @@ obstacles_fond2 = [
 ]
 
 capture_fond2 = [
-    # pos longueur hauteur taille longueur hauteur
     pygame.Rect(160, 460, 5, 5),
     pygame.Rect(190, 520, 5, 5),
     pygame.Rect(280, 575, 5, 5),
@@ -243,8 +242,7 @@ while running:
             dy = -player["speed"]
         elif keys[pygame.K_DOWN]:
             dy = player["speed"]
-        elif keys[pygame.K_SPACE]:
-            interface_capture(screen)
+
 
         new_x = player["x"] + dx
         new_y = player["y"] + dy
