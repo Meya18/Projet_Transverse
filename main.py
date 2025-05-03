@@ -20,8 +20,10 @@ maison1 = pygame.image.load("images/maison1.jpg")
 maison1 = pygame.transform.scale(maison1, (1000, 600))
 maison2 = pygame.image.load("images/maison2.png")
 maison2 = pygame.transform.scale(maison2, (1000, 600))
-maison3 = pygame.image.load("images/maison3.png")
-maison3 = pygame.transform.scale(maison3, (1000, 600))
+etage = pygame.image.load("images/etage.png")
+etage = pygame.transform.scale(etage, (1000, 600))
+laboratoire = pygame.image.load("images/laboratoire.png")
+laboratoire = pygame.transform.scale(laboratoire, (1000, 600))
 
 # Chargement des personnages pour la sélection
 persos = {
@@ -79,7 +81,7 @@ player_image = None
 
 # Obstacles fond1
 obstacles = [
-    pygame.Rect(530, 275, 305, 140),
+    pygame.Rect(545, 290, 285, 125),
     pygame.Rect(205, 105, 220, 135),
     pygame.Rect(170, 200, 35, 40),
     pygame.Rect(585, 100, 240, 140),
@@ -154,7 +156,7 @@ obstacles_maison2 = [
     pygame.Rect(490, 585, 510, 15)
 ]
 
-obstacles_maison3 = [
+obstacles_etage = [
     pygame.Rect(0, 0, 1000, 210),
     pygame.Rect(0, 210, 200, 390),
     pygame.Rect(800, 210, 200, 390),
@@ -163,6 +165,10 @@ obstacles_maison3 = [
     pygame.Rect(675, 210, 125, 20),
     pygame.Rect(740, 230, 60, 35),
     pygame.Rect(655, 325, 90, 100)
+]
+
+obstacles_laboratoire = [
+    pygame.Rect(0, 0, 10, 10),
 ]
 
 #ouverture de l'interface de capture
@@ -187,11 +193,12 @@ passage_rect = [
     pygame.Rect(500, 0, 90, 30), #fond2
     pygame.Rect(260,240,20,2), #maison 1
     pygame.Rect(635,240,20,2), #maison 2
-    pygame.Rect(675,420,20,2), #maison 3
+    pygame.Rect(675,420,20,2), #laboratoire
     pygame.Rect(270,575,70,2), #maison1 -> jeu
     pygame.Rect(360,595,125,2), #maison2 -> jeu
-    pygame.Rect(260,210,80,2), #maison3 -> jeu
-    pygame.Rect(360,595,120,2) #fond2 -> jeu
+    pygame.Rect(260,210,80,2), #etage -> maison2
+    pygame.Rect(360,595,120,2), #fond2 -> jeu
+    pygame.Rect(845,120,5,90) #maison2 -> etage
 ]
 
 # Scènes
@@ -202,7 +209,8 @@ scenes = {
     "fond2": {"fond": fond2_image, "obstacles": obstacles_fond2},
     "maison1": {"fond": maison1, "persos": persos},
     "maison2": {"fond": maison2, "persos": persos},
-    "maison3": {"fond": maison3, "persos": persos},
+    "etage": {"fond": etage, "persos": persos},
+    "laboratoire": {"fond": laboratoire, "persos": persos}
 }
 
 current_scene = "debut"
@@ -299,8 +307,8 @@ while running:
             current_scene = "maison2"
 
         if passage_rect[3].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 280, 230
-            current_scene = "maison3"
+            player["x"], player["y"] = 440, 550
+            current_scene = "laboratoire"
 
         if player["image"]:
             screen.blit(player["image"], (player["x"], player["y"]))
@@ -357,6 +365,10 @@ while running:
         if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_maison2):
             player["x"], player["y"] = new_x, new_y
 
+        if passage_rect[8].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
+            player["x"], player["y"] = 280, 230
+            current_scene = "etage"
+
         if passage_rect[5].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
             player["x"], player["y"] = 635,245
             current_scene = "jeu"
@@ -364,8 +376,8 @@ while running:
         if player["image"]:
             screen.blit(player["image"], (player["x"], player["y"]))
 
-    elif current_scene == "maison3":
-        screen.blit(scenes["maison3"]["fond"], (0, 0))
+    elif current_scene == "etage":
+        screen.blit(scenes["etage"]["fond"], (0, 0))
 
         keys = pygame.key.get_pressed()
         dx, dy = 0, 0
@@ -382,14 +394,40 @@ while running:
         new_x = player["x"] + dx
         new_y = player["y"] + dy
         new_rect = pygame.Rect(new_x, new_y, 30, 30)
-        screen.blit(scenes["maison3"]["fond"], (0, 0))
+        screen.blit(scenes["etage"]["fond"], (0, 0))
 
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_maison3):
+        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_etage):
             player["x"], player["y"] = new_x, new_y
 
         if passage_rect[6].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 675,440
-            current_scene = "jeu"
+            player["x"], player["y"] = 800,150
+            current_scene = "maison2"
+
+        if player["image"]:
+            screen.blit(player["image"], (player["x"], player["y"]))
+
+    elif current_scene == "laboratoire":
+        screen.blit(scenes["laboratoire"]["fond"], (0, 0))
+
+        keys = pygame.key.get_pressed()
+        dx, dy = 0, 0
+
+        if keys[pygame.K_LEFT]:
+            dx = -player["speed"]
+        elif keys[pygame.K_RIGHT]:
+            dx = player["speed"]
+        elif keys[pygame.K_UP]:
+            dy = -player["speed"]
+        elif keys[pygame.K_DOWN]:
+            dy = player["speed"]
+
+        new_x = player["x"] + dx
+        new_y = player["y"] + dy
+        new_rect = pygame.Rect(new_x, new_y, 30, 30)
+        screen.blit(scenes["laboratoire"]["fond"], (0, 0))
+
+        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_laboratoire):
+            player["x"], player["y"] = new_x, new_y
 
         if player["image"]:
             screen.blit(player["image"], (player["x"], player["y"]))
