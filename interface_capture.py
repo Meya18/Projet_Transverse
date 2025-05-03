@@ -94,9 +94,8 @@ class Balle:
 
 
 class Cible:
-    def __init__(self, image_path, center_pos):
-        raw = pygame.image.load(image_path).convert_alpha()
-        self.img = pygame.transform.scale(raw, (60, 60))
+    def __init__(self, image_surface, center_pos):
+        self.img = pygame.transform.scale(image_surface, (60, 60))
         self.rect = self.img.get_rect(center=center_pos)
         self.hit = False
         self.speed = 2
@@ -157,7 +156,23 @@ class Chargeur:
 
 def interface_capture(surface):
     balle = Balle("images/pokeball.png", (100, HEIGHT - 100))
-    cible = Cible("images/carabaffe.png", (800, 400))
+    pokemons = {
+        "carapuce": pygame.image.load("images/carapuce.png"),
+        "darkrai" : pygame.image.load("images/darkrai.webp"),
+        "dracaufeu": pygame.image.load("images/dracaufeu.png"),
+        "dracolosse": pygame.image.load("images/dracolosse.png"),
+        "evoli": pygame.image.load("images/evoli.png"),
+        "herbizarre": pygame.image.load("images/herbizarre.jpg"),
+        "lucario": pygame.image.load("images/lucario.png"),
+        "metalosse": pygame.image.load("images/metalosse.webp"),
+        "mew": pygame.image.load("images/mew.webp"),
+        "nymphali": pygame.image.load("images/nymphali.png"),
+        "pikachu": pygame.image.load("images/pikachu.png"),
+        "carabaffe": pygame.image.load("images/carabaffe.png")
+    }
+
+    random_key = random.choice(list(pokemons.keys()))
+    cible = Cible(pokemons[random_key], (800, 400))
     chargeur = Chargeur()
     fond = pygame.transform.scale(pygame.image.load("images/fond_combat.jpg").convert(), (WIDTH, HEIGHT))
 
