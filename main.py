@@ -224,7 +224,7 @@ scenes = {
 }
 
 current_scene = "debut"
-player = {"x": 487, "y": 560, "speed": 4, "image": None}
+player = {"x": 385, "y": 370, "speed": 4, "image": None}
 
 # Boucle du jeu
 running = True
@@ -243,7 +243,7 @@ while running:
                     if rect.collidepoint(event.pos):
                         player["image"] = joueur_images[perso]
                         scenes["jeu"]["joueur"] = player
-                        current_scene = "jeu"
+                        current_scene = "etage"
 
     screen.fill(noir)
 
