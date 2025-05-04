@@ -168,7 +168,16 @@ obstacles_etage = [
 ]
 
 obstacles_laboratoire = [
-    pygame.Rect(0, 0, 10, 10),
+    pygame.Rect(0, 0, 25, 600),
+    pygame.Rect(25, 0, 1000, 130),
+    pygame.Rect(955, 130, 45, 470),
+    pygame.Rect(25, 470, 345, 130),
+    pygame.Rect(555, 470, 400, 130),
+    pygame.Rect(25, 130, 415, 30),
+    pygame.Rect(635, 130, 320, 30),
+    pygame.Rect(25, 160, 65, 165),
+    pygame.Rect(560, 260, 230, 80),
+    pygame.Rect(110, 225, 135, 140)
 ]
 
 #ouverture de l'interface de capture
@@ -198,7 +207,8 @@ passage_rect = [
     pygame.Rect(360,595,125,2), #maison2 -> jeu
     pygame.Rect(260,210,80,2), #etage -> maison2
     pygame.Rect(360,595,120,2), #fond2 -> jeu
-    pygame.Rect(845,120,5,90) #maison2 -> etage
+    pygame.Rect(845,120,5,90), #maison2 -> etage
+    pygame.Rect(370, 595, 190, 5)  #laboratoire -> jeu
 ]
 
 # Scènes
@@ -428,6 +438,10 @@ while running:
 
         if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_laboratoire):
             player["x"], player["y"] = new_x, new_y
+
+        if passage_rect[9].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
+            player["x"], player["y"] = 670, 420
+            current_scene = "jeu"
 
         if player["image"]:
             screen.blit(player["image"], (player["x"], player["y"]))
