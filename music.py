@@ -4,10 +4,9 @@ import pygame
 pygame.mixer.init()
 
 # Chemins des musiques
-MUSIQUE_INTRO = "musique_intro.mp3"
-MUSIQUE_JEU = "musique_jeu.mp3"
-MUSIQUE_COMBAT = "musique_combat.mp3"
-MUSIQUE_CAPTURE = "musique_capture.mp3"
+MUSIQUE_INTRO = "musique/musique_intro.mp3"
+MUSIQUE_JEU = "musique/musique_jeu.mp3"
+MUSIQUE_COMBAT = "musique/musique_combat.mp3"
 
 class MusicManager:
     def __init__(self):
@@ -37,10 +36,6 @@ class MusicManager:
 
         elif nouvel_etat == "combat":
             self.jouer_musique(MUSIQUE_COMBAT)
-
-        elif nouvel_etat == "capture":
-            self.jouer_musique(MUSIQUE_CAPTURE, loop=False)
-            pygame.mixer.music.set_endevent(pygame.USEREVENT)
 
     def gerer_evenement(self, event):
         if event.type == pygame.USEREVENT and self.etat == "capture":

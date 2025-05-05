@@ -1,10 +1,6 @@
 import pygame
 from interface_capture import *
-from music import (
-    jouer_musique_accueil, arreter_musique_accueil,
-    jouer_musique_jeu, arreter_musique_jeu,
-    jouer_musique_fin, arreter_musique_fin
-)
+from music import MusicManager
 pygame.init()
 
 # État initial
@@ -14,6 +10,9 @@ musique_accueil_jouee = False
 # Définition de la fenêtre
 screen = pygame.display.set_mode((1000, 600))
 pygame.display.set_caption("Jeu Team Rocket")
+
+music_manager = MusicManager()
+music_manager.set_etat("intro")
 
 # Chargement des images de fond
 background = pygame.image.load("images/fond1.png")
@@ -315,6 +314,7 @@ while running:
             screen.blit(texte_nom, (pos[0] - texte_nom.get_width() // 2, pos[1] + perso_sizes[perso]["height"] // 2))
 
     elif current_scene == "jeu":
+        music_manager.set_etat("jeu")
         keys = pygame.key.get_pressed()
         dx, dy = 0, 0
 
@@ -529,6 +529,7 @@ while running:
             current_scene = "jeu"
 
         if 0 <= new_x <= 970 and 0 <= new_y <= 570 and any(new_rect.colliderect(obs) for obs in capture_fond2):
+            music_manager.set_etat("combat")
             interface_capture(screen)
 
         if player["image"]:
