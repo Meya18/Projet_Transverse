@@ -52,7 +52,7 @@ for key in persos:
 for key in joueur_images:
     joueur_images[key] = pygame.transform.scale(joueur_images[key], (30, 30))
 
-# Positions personnages sélection
+# Positions personnages
 perso_positions = {
     "james": (225, 275),
     "jessie": (775, 275),
@@ -62,11 +62,6 @@ perso_positions = {
 # Police
 font_titre = pygame.font.SysFont("Arial", 40, bold=True)
 font_nom = pygame.font.SysFont("Arial", 30)
-
-# Couleurs
-blanc = (255, 255, 255)
-noir = (0, 0, 0)
-bleu = (0, 0, 255)  # Couleur du carré bleu
 
 # Bouton début
 bouton_largeur, bouton_hauteur = 300, 150
@@ -125,6 +120,7 @@ obstacles_fond2 = [
     pygame.Rect(544, 120, 20, 150)
 ]
 
+#obstacles maison 1
 obstacles_maison1 = [
     pygame.Rect(0, 0, 175, 600),
     pygame.Rect(825, 0, 175, 600),
@@ -144,6 +140,7 @@ obstacles_maison1 = [
     pygame.Rect(700, 90, 125, 50),
 ]
 
+#obstacles maison 2
 obstacles_maison2 = [
     pygame.Rect(0, 0, 1000, 130),
     pygame.Rect(0, 130, 380, 25),
@@ -156,6 +153,7 @@ obstacles_maison2 = [
     pygame.Rect(490, 585, 510, 15)
 ]
 
+#obstacles étage
 obstacles_etage = [
     pygame.Rect(0, 0, 1000, 210),
     pygame.Rect(0, 210, 200, 390),
@@ -167,6 +165,7 @@ obstacles_etage = [
     pygame.Rect(655, 325, 90, 100)
 ]
 
+#obstacles laboratoire
 obstacles_laboratoire = [
     pygame.Rect(0, 0, 25, 600),
     pygame.Rect(25, 0, 1000, 130),
@@ -221,11 +220,11 @@ phrases_etage = [
 ]
 
 phrase_index = 0
-affichage_texte = True  # Si on est encore en train d'afficher le texte
+affichage_texte = True
 texte_actuel = ""
 caractere_index = 0
 last_update_time = pygame.time.get_ticks()
-vitesse_texte = 30  # Millisecondes entre chaque lettre
+vitesse_texte = 30
 
 # Rectangle de la boîte de dialogue
 dialogue_rect = pygame.Rect(50, 450, 900, 130)
@@ -271,7 +270,7 @@ while running:
                         scenes["jeu"]["joueur"] = player
                         current_scene = "etage"
 
-    screen.fill(noir)
+    screen.fill((255,255,255))
 
     if current_scene == "debut":
         screen.blit(scenes["debut"]["fond"], (0, 0))
@@ -288,7 +287,7 @@ while running:
 
     elif current_scene == "choix_perso":
         screen.blit(scenes["choix_perso"]["fond"], (0, 0))
-        titre = font_titre.render("Choisissez votre personnage", True, noir)
+        titre = font_titre.render("Choisissez votre personnage", True, (255,255,255))
         screen.blit(titre, (500 - titre.get_width() // 2, 30))
         mouse_x, mouse_y = pygame.mouse.get_pos()
         for perso, pos in perso_positions.items():
@@ -304,7 +303,7 @@ while running:
             scaled_rect = scaled_perso.get_rect(center=pos)
             screen.blit(scaled_perso, scaled_rect.topleft)
             nom = {"jessie": "Jessie", "james": "James", "chouette": "Effraie"}[perso]
-            texte_nom = font_nom.render(nom, True, blanc)
+            texte_nom = font_nom.render(nom, True, (0,0,0))
             screen.blit(texte_nom, (pos[0] - texte_nom.get_width() // 2, pos[1] + perso_sizes[perso]["height"] // 2))
 
     elif current_scene == "jeu":
