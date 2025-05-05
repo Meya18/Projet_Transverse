@@ -67,20 +67,6 @@ bouton_scale = 1.0
 perso_scale = {"james": 1.0, "jessie": 1.0, "chouette": 1.0}
 player_image = None
 
-# Rectangle passage de scène
-passage_rect = [
-    pygame.Rect(500, 0, 90, 30), #fond2
-    pygame.Rect(260,240,20,2), #maison 1
-    pygame.Rect(635,240,20,2), #maison 2
-    pygame.Rect(675,420,20,2), #laboratoire
-    pygame.Rect(270,575,70,2), #maison1 -> jeu
-    pygame.Rect(360,595,125,2), #maison2 -> jeu
-    pygame.Rect(260,210,80,2), #etage -> maison2
-    pygame.Rect(360,595,120,2), #fond2 -> jeu
-    pygame.Rect(845,120,5,90), #maison2 -> etage
-    pygame.Rect(370, 595, 190, 5)  #laboratoire -> jeu
-]
-
 # Phrases à afficher
 phrases_etage = [
     "Bienvenue dans ce jeu Team Rocket !",
