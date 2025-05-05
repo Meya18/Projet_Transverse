@@ -2,6 +2,7 @@ import pygame
 from interface_capture import *
 from music import MusicManager
 from obstacles import *
+from load_image import *
 pygame.init()
 
 # État initial
@@ -15,23 +16,7 @@ pygame.display.set_caption("Jeu Team Rocket")
 music_manager = MusicManager()
 music_manager.set_etat("intro")
 
-# Chargement des images de fond
-background = pygame.image.load("images/fond1.png")
-background = pygame.transform.scale(background, (1000, 600))
-fond2_image = pygame.image.load("images/fond2.png")
-fond2_image = pygame.transform.scale(fond2_image, (1000, 600))
-debut_image = pygame.image.load("images/debut.jpeg")
-debut_image = pygame.transform.scale(debut_image, (1000, 600))
-choix_perso_image = pygame.image.load("images/choix_perso.jpg")
-choix_perso_image = pygame.transform.scale(choix_perso_image, (1000, 600))
-maison1 = pygame.image.load("images/maison1.jpg")
-maison1 = pygame.transform.scale(maison1, (1000, 600))
-maison2 = pygame.image.load("images/maison2.png")
-maison2 = pygame.transform.scale(maison2, (1000, 600))
-etage = pygame.image.load("images/etage.png")
-etage = pygame.transform.scale(etage, (1000, 600))
-laboratoire = pygame.image.load("images/laboratoire.png")
-laboratoire = pygame.transform.scale(laboratoire, (1000, 600))
+
 
 # Chargement des personnages pour la sélection
 persos = {
