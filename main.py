@@ -1,7 +1,15 @@
 import pygame
 from interface_capture import *
-
+from music import (
+    jouer_musique_accueil, arreter_musique_accueil,
+    jouer_musique_jeu, arreter_musique_jeu,
+    jouer_musique_fin, arreter_musique_fin
+)
 pygame.init()
+
+# État initial
+etat_jeu = "debut"
+musique_accueil_jouee = False
 
 # Définition de la fenêtre
 screen = pygame.display.set_mode((1000, 600))

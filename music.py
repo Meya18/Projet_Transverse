@@ -1,49 +1,47 @@
 import pygame
-import time
 
 # Initialisation du mixer
 pygame.mixer.init()
 
-# Chemins vers les fichiers audio (remplace-les par tes vrais fichiers)
+# Chemins des musiques
 MUSIQUE_INTRO = "musique_intro.mp3"
+MUSIQUE_JEU = "musique_jeu.mp3"
 MUSIQUE_COMBAT = "musique_combat.mp3"
 MUSIQUE_CAPTURE = "musique_capture.mp3"
 
-def jouer_musique(fichier, loop=True):
-    pygame.mixer.music.load(fichier)
-    pygame.mixer.music.play(-1 if loop else 0)
+class MusicManager:
+    def __init__(self):
+        self.etat = None
+        self.musique_actuelle = None
 
-def arreter_musique():
-    pygame.mixer.music.stop()
+    def jouer_musique(self, fichier, loop=True):
+        if self.musique_actuelle != fichier:
+            pygame.mixer.music.load(fichier)
+            pygame.mixer.music.play(-1 if loop else 0)
+            self.musique_actuelle = fichier
 
-# Démo d'utilisation
-if __name__ == "__main__":
-    print("Musique d'intro...")
-    jouer_musique(MUSIQUE_INTRO)
-    time.sleep(5)  # On laisse jouer 5 secondes
+    def arreter_musique(self):
+        pygame.mixer.music.stop()
+        self.musique_actuelle = None
 
-    print("Combat !")
-    jouer_musique(MUSIQUE_COMBAT)
-    time.sleep(5)
+    def set_etat(self, nouvel_etat):
+        if nouvel_etat == self.etat:
+            return  # Ne rien faire si pas de changement
+        self.etat = nouvel_etat
 
-    print("Capture d’un Pokémon !")
-    jouer_musique(MUSIQUE_CAPTURE, loop=False)
-    time.sleep(5)
+        if nouvel_etat == "intro":
+            self.jouer_musique(MUSIQUE_INTRO)
 
-    print("Fin")
-    arreter_musique()
+        elif nouvel_etat == "jeu":
+            self.jouer_musique(MUSIQUE_JEU)
 
+        elif nouvel_etat == "combat":
+            self.jouer_musique(MUSIQUE_COMBAT)
 
-#utilisation dans le jeu
-from musique_manager import jouer_musique, arreter_musique
+        elif nouvel_etat == "capture":
+            self.jouer_musique(MUSIQUE_CAPTURE, loop=False)
+            pygame.mixer.music.set_endevent(pygame.USEREVENT)
 
-# Quand le jeu commence
-jouer_musique("musique_intro.mp3")
-
-# Quand un combat commence
-jouer_musique("musique_combat.mp3")
-
-# Quand un Pokémon est capturé
-jouer_musique("musique_capture.mp3", loop=False)
-
-
+    def gerer_evenement(self, event):
+        if event.type == pygame.USEREVENT and self.etat == "capture":
+            self.set_etat("jeu")
