@@ -13,3 +13,28 @@ maison1 = load_and_scale("images/maison1.jpg", (1000, 600))
 maison2 = load_and_scale("images/maison2.png", (1000, 600))
 etage = load_and_scale("images/etage.png", (1000, 600))
 laboratoire = load_and_scale("images/laboratoire.png", (1000, 600))
+
+#chargements des images personnages
+james_p = pygame.image.load("images/james_p.png")
+james_f = pygame.image.load("images/james_f.png")
+jessie_p = pygame.image.load("images/jessie_p.png")
+jessie_f = pygame.image.load("images/jessie_f.png")
+chouette_p = pygame.image.load("images/chouette_p.png")
+chouette_f = pygame.image.load("images/chouette_f.png")
+
+#chargements des images de pokémons
+carapuce = pygame.image.load("images/carapuce.png")
+darkrai = pygame.image.load("images/darkrai.webp")
+dracaufeu = pygame.image.load("images/dracaufeu.png")
+dracolosse = pygame.image.load("images/dracolosse.png")
+evoli = pygame.image.load("images/evoli.png")
+herbizarre = pygame.image.load("images/herbizarre.jpg")
+lucario = pygame.image.load("images/lucario.png")
+metalosse = pygame.image.load("images/metalosse.webp")
+mew = pygame.image.load("images/mew.webp")
+nymphali = pygame.image.load("images/nymphali.png")
+pikachu = pygame.image.load("images/pikachu.png")
+carabaffe = pygame.image.load("images/carabaffe.png")
+
+
+

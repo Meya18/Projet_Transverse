@@ -20,16 +20,16 @@ music_manager.set_etat("intro")
 
 # Chargement des personnages pour la sélection
 persos = {
-    "james": pygame.image.load("images/james_p.png"),
-    "jessie": pygame.image.load("images/jessie_p.png"),
-    "chouette": pygame.image.load("images/chouette_p.png")
+    "james": james_p,
+    "jessie": jessie_p,
+    "chouette": chouette_p
 }
 
 # Images correspondant au personnage sélectionné
 joueur_images = {
-    "james": pygame.image.load("images/james_f.png"),
-    "jessie": pygame.image.load("images/jessie_f.png"),
-    "chouette": pygame.image.load("images/chouette_f.png")
+    "james": james_f,
+    "jessie": jessie_f,
+    "chouette": chouette_f
 }
 
 # Taille des personnages
