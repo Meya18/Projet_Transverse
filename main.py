@@ -211,6 +211,32 @@ passage_rect = [
     pygame.Rect(370, 595, 190, 5)  #laboratoire -> jeu
 ]
 
+# Phrases à afficher
+phrases_etage = [
+    "Bienvenue dans ce jeu Team Rocket !",
+    "Ton objectif est de capturer des Pokémon sauvages.",
+    "Rends toi dans les hautes herbes pour les trouver.",
+    "Utilise les touches directionnelles pour te déplacer.",
+    "Bonne chance !"
+]
+
+phrase_index = 0
+affichage_texte = True  # Si on est encore en train d'afficher le texte
+texte_actuel = ""
+caractere_index = 0
+last_update_time = pygame.time.get_ticks()
+vitesse_texte = 30  # Millisecondes entre chaque lettre
+
+# Rectangle de la boîte de dialogue
+dialogue_rect = pygame.Rect(50, 450, 900, 130)
+
+def afficher_dialogue(screen, font, phrase, texte_actuel, dialogue_rect):
+    pygame.draw.rect(screen, (255, 255, 255), dialogue_rect)
+    pygame.draw.rect(screen, (0, 0, 0), dialogue_rect, 3)
+
+    texte_surface = font.render(texte_actuel, True, (0, 0, 0))
+    screen.blit(texte_surface, (dialogue_rect.x + 20, dialogue_rect.y + 20))
+
 # Scènes
 scenes = {
     "debut": {"fond": debut_image, "bouton": bouton_debut},
@@ -389,25 +415,47 @@ while running:
     elif current_scene == "etage":
         screen.blit(scenes["etage"]["fond"], (0, 0))
 
-        keys = pygame.key.get_pressed()
-        dx, dy = 0, 0
+        if not affichage_texte:
+            keys = pygame.key.get_pressed()
+            dx, dy = 0, 0
 
-        if keys[pygame.K_LEFT]:
-            dx = -player["speed"]
-        elif keys[pygame.K_RIGHT]:
-            dx = player["speed"]
-        elif keys[pygame.K_UP]:
-            dy = -player["speed"]
-        elif keys[pygame.K_DOWN]:
-            dy = player["speed"]
+            if keys[pygame.K_LEFT]:
+                dx = -player["speed"]
+            elif keys[pygame.K_RIGHT]:
+                dx = player["speed"]
+            elif keys[pygame.K_UP]:
+                dy = -player["speed"]
+            elif keys[pygame.K_DOWN]:
+                dy = player["speed"]
 
-        new_x = player["x"] + dx
-        new_y = player["y"] + dy
-        new_rect = pygame.Rect(new_x, new_y, 30, 30)
-        screen.blit(scenes["etage"]["fond"], (0, 0))
+            new_x = player["x"] + dx
+            new_y = player["y"] + dy
+            new_rect = pygame.Rect(new_x, new_y, 30, 30)
 
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_etage):
-            player["x"], player["y"] = new_x, new_y
+            if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(
+                    new_rect.colliderect(obs) for obs in obstacles_etage):
+                player["x"], player["y"] = new_x, new_y
+
+        if affichage_texte:
+            now = pygame.time.get_ticks()
+            if now - last_update_time > vitesse_texte:
+                if caractere_index < len(phrases_etage[phrase_index]):
+                    texte_actuel += phrases_etage[phrase_index][caractere_index]
+                    caractere_index += 1
+                    last_update_time = now
+
+            afficher_dialogue(screen, font_nom, phrases_etage[phrase_index], texte_actuel, dialogue_rect)
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if affichage_texte and dialogue_rect.collidepoint(event.pos):
+                if caractere_index >= len(phrases_etage[phrase_index]):
+                    phrase_index += 1
+                    if phrase_index >= len(phrases_etage):
+                        affichage_texte = False
+                    else:
+                        texte_actuel = ""
+                        caractere_index = 0
+
 
         if passage_rect[6].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
             player["x"], player["y"] = 800,150
