@@ -144,7 +144,7 @@ while running:
 
     elif current_scene == "choix_perso":
         screen.blit(scenes["choix_perso"]["fond"], (0, 0))
-        titre = font_titre.render("Choisissez votre personnage", True, (255,255,255))
+        titre = font_titre.render("Choisissez votre personnage", True, (0,0,0))
         screen.blit(titre, (500 - titre.get_width() // 2, 30))
         mouse_x, mouse_y = pygame.mouse.get_pos()
         for perso, pos in perso_positions.items():
@@ -160,7 +160,7 @@ while running:
             scaled_rect = scaled_perso.get_rect(center=pos)
             screen.blit(scaled_perso, scaled_rect.topleft)
             nom = {"jessie": "Jessie", "james": "James", "chouette": "Effraie"}[perso]
-            texte_nom = font_nom.render(nom, True, (0,0,0))
+            texte_nom = font_nom.render(nom, True, (255,255,255))
             screen.blit(texte_nom, (pos[0] - texte_nom.get_width() // 2, pos[1] + perso_sizes[perso]["height"] // 2))
 
     elif current_scene == "jeu":
