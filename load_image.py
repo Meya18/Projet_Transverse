@@ -14,6 +14,9 @@ maison2 = load_and_scale("images/maison2.png", (1000, 600))
 etage = load_and_scale("images/etage.png", (1000, 600))
 laboratoire = load_and_scale("images/laboratoire.png", (1000, 600))
 
+#bouton du début
+bouton_debut = pygame.image.load("images/bouton_debut.png")
+
 #chargements des images personnages
 james_p = pygame.image.load("images/james_p.png")
 james_f = pygame.image.load("images/james_f.png")

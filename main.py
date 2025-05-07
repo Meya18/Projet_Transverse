@@ -3,6 +3,8 @@ from interface_capture import *
 from music import MusicManager
 from obstacles import *
 from load_image import *
+from joueur import *
+
 pygame.init()
 
 # État initial
@@ -16,7 +18,15 @@ pygame.display.set_caption("Jeu Team Rocket")
 music_manager = MusicManager()
 music_manager.set_etat("intro")
 
+# Police
+font_titre = pygame.font.SysFont("Arial", 40, bold=True)
+font_nom = pygame.font.SysFont("Arial", 30)
 
+# Bouton début
+bouton_largeur, bouton_hauteur = 300, 150
+bouton_debut = pygame.transform.scale(bouton_debut, (bouton_largeur, bouton_hauteur))
+button_rect = bouton_debut.get_rect(center=(500, 500))
+bouton_scale = 1.0
 
 # Chargement des personnages pour la sélection
 persos = {
@@ -51,17 +61,6 @@ perso_positions = {
     "jessie": (775, 275),
     "chouette": (500, 275)
 }
-
-# Police
-font_titre = pygame.font.SysFont("Arial", 40, bold=True)
-font_nom = pygame.font.SysFont("Arial", 30)
-
-# Bouton début
-bouton_largeur, bouton_hauteur = 300, 150
-bouton_debut = pygame.image.load("images/bouton_debut.png")
-bouton_debut = pygame.transform.scale(bouton_debut, (bouton_largeur, bouton_hauteur))
-button_rect = bouton_debut.get_rect(center=(500, 500))
-bouton_scale = 1.0
 
 # Variables d'animation sélection
 perso_scale = {"james": 1.0, "jessie": 1.0, "chouette": 1.0}
@@ -165,25 +164,7 @@ while running:
 
     elif current_scene == "jeu":
         music_manager.set_etat("jeu")
-        keys = pygame.key.get_pressed()
-        dx, dy = 0, 0
-
-        # Direction unique
-        if keys[pygame.K_LEFT]:
-            dx = -player["speed"]
-        elif keys[pygame.K_RIGHT]:
-            dx = player["speed"]
-        elif keys[pygame.K_UP]:
-            dy = -player["speed"]
-        elif keys[pygame.K_DOWN]:
-            dy = player["speed"]
-
-        new_x = player["x"] + dx
-        new_y = player["y"] + dy
-        new_rect = pygame.Rect(new_x, new_y, 30, 30)
-
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles):
-            player["x"], player["y"] = new_x, new_y
+        deplacer_joueur(obstacles, player)
 
         screen.blit(scenes["jeu"]["fond"], (0, 0))
 
@@ -209,25 +190,7 @@ while running:
 
     elif current_scene == "maison1":
         screen.blit(scenes["maison1"]["fond"], (0, 0))
-        keys = pygame.key.get_pressed()
-        dx, dy = 0, 0
-
-        if keys[pygame.K_LEFT]:
-            dx = -player["speed"]
-        elif keys[pygame.K_RIGHT]:
-            dx = player["speed"]
-        elif keys[pygame.K_UP]:
-            dy = -player["speed"]
-        elif keys[pygame.K_DOWN]:
-            dy = player["speed"]
-
-        new_x = player["x"] + dx
-        new_y = player["y"] + dy
-        new_rect = pygame.Rect(new_x, new_y, 30, 30)
-        screen.blit(scenes["maison1"]["fond"], (0, 0))
-
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_maison1):
-            player["x"], player["y"] = new_x, new_y
+        deplacer_joueur(obstacles_maison1, player)
 
         if passage_rect[4].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
             player["x"], player["y"] = 260, 245
@@ -238,25 +201,7 @@ while running:
 
     elif current_scene == "maison2":
         screen.blit(scenes["maison2"]["fond"], (0, 0))
-        keys = pygame.key.get_pressed()
-        dx, dy = 0, 0
-
-        if keys[pygame.K_LEFT]:
-            dx = -player["speed"]
-        elif keys[pygame.K_RIGHT]:
-            dx = player["speed"]
-        elif keys[pygame.K_UP]:
-            dy = -player["speed"]
-        elif keys[pygame.K_DOWN]:
-            dy = player["speed"]
-
-        new_x = player["x"] + dx
-        new_y = player["y"] + dy
-        new_rect = pygame.Rect(new_x, new_y, 30, 30)
-        screen.blit(scenes["maison2"]["fond"], (0, 0))
-
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_maison2):
-            player["x"], player["y"] = new_x, new_y
+        deplacer_joueur(obstacles_maison2, player)
 
         if passage_rect[8].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
             player["x"], player["y"] = 280, 230
@@ -273,25 +218,7 @@ while running:
         screen.blit(scenes["etage"]["fond"], (0, 0))
 
         if not affichage_texte:
-            keys = pygame.key.get_pressed()
-            dx, dy = 0, 0
-
-            if keys[pygame.K_LEFT]:
-                dx = -player["speed"]
-            elif keys[pygame.K_RIGHT]:
-                dx = player["speed"]
-            elif keys[pygame.K_UP]:
-                dy = -player["speed"]
-            elif keys[pygame.K_DOWN]:
-                dy = player["speed"]
-
-            new_x = player["x"] + dx
-            new_y = player["y"] + dy
-            new_rect = pygame.Rect(new_x, new_y, 30, 30)
-
-            if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(
-                    new_rect.colliderect(obs) for obs in obstacles_etage):
-                player["x"], player["y"] = new_x, new_y
+            deplacer_joueur(obstacles_etage, player)
 
         if affichage_texte:
             now = pygame.time.get_ticks()
@@ -324,25 +251,7 @@ while running:
     elif current_scene == "laboratoire":
         screen.blit(scenes["laboratoire"]["fond"], (0, 0))
 
-        keys = pygame.key.get_pressed()
-        dx, dy = 0, 0
-
-        if keys[pygame.K_LEFT]:
-            dx = -player["speed"]
-        elif keys[pygame.K_RIGHT]:
-            dx = player["speed"]
-        elif keys[pygame.K_UP]:
-            dy = -player["speed"]
-        elif keys[pygame.K_DOWN]:
-            dy = player["speed"]
-
-        new_x = player["x"] + dx
-        new_y = player["y"] + dy
-        new_rect = pygame.Rect(new_x, new_y, 30, 30)
-        screen.blit(scenes["laboratoire"]["fond"], (0, 0))
-
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_laboratoire):
-            player["x"], player["y"] = new_x, new_y
+        deplacer_joueur(obstacles_laboratoire, player)
 
         if passage_rect[9].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
             player["x"], player["y"] = 670, 420
@@ -352,33 +261,17 @@ while running:
             screen.blit(player["image"], (player["x"], player["y"]))
 
     elif current_scene == "fond2":
-        keys = pygame.key.get_pressed()
-        dx, dy = 0, 0
-
-        if keys[pygame.K_LEFT]:
-            dx = -player["speed"]
-        elif keys[pygame.K_RIGHT]:
-            dx = player["speed"]
-        elif keys[pygame.K_UP]:
-            dy = -player["speed"]
-        elif keys[pygame.K_DOWN]:
-            dy = player["speed"]
-
-
-        new_x = player["x"] + dx
-        new_y = player["y"] + dy
-        new_rect = pygame.Rect(new_x, new_y, 30, 30)
-
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and not any(new_rect.colliderect(obs) for obs in obstacles_fond2):
-            player["x"], player["y"] = new_x, new_y
-
+        deplacer_joueur(obstacles_fond2, player)
         screen.blit(scenes["fond2"]["fond"], (0, 0))
 
-        if passage_rect[7].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
+        player_rect = pygame.Rect(player["x"], player["y"], 30, 30)
+
+        if passage_rect[7].colliderect(player_rect):
             player["x"], player["y"] = 530, 30
             current_scene = "jeu"
 
-        if 0 <= new_x <= 970 and 0 <= new_y <= 570 and any(new_rect.colliderect(obs) for obs in capture_fond2):
+        if 0 <= player["x"] <= 970 and 0 <= player["y"] <= 570 and any(
+                player_rect.colliderect(obs) for obs in capture_fond2):
             music_manager.set_etat("combat")
             interface_capture(screen)
 
