@@ -9,6 +9,8 @@ from scene_debut import *
 from scene_choix_perso import *
 from scene_maison1 import *
 from scene_maison2 import *
+from scene_laboratoire import *
+
 
 pygame.init()
 
@@ -205,16 +207,7 @@ while running:
             screen.blit(player["image"], (player["x"], player["y"]))
 
     elif current_scene == "laboratoire":
-        screen.blit(scenes["laboratoire"]["fond"], (0, 0))
-
-        deplacer_joueur(obstacles_laboratoire, player)
-
-        if passage_rect[9].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 670, 420
-            current_scene = "jeu"
-
-        if player["image"]:
-            screen.blit(player["image"], (player["x"], player["y"]))
+        current_scene = afficher_scene_laboratoire(screen, scenes, player)
 
     elif current_scene == "fond2":
         deplacer_joueur(obstacles_fond2, player)
