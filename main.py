@@ -19,7 +19,6 @@ music_manager = MusicManager()
 music_manager.set_etat("intro")
 
 # Police
-font_titre = pygame.font.SysFont("Arial", 40, bold=True)
 font_nom = pygame.font.SysFont("Arial", 30)
 
 # Bouton début
@@ -143,8 +142,6 @@ while running:
 
     elif current_scene == "choix_perso":
         screen.blit(scenes["choix_perso"]["fond"], (0, 0))
-        titre = font_titre.render("Choisissez votre personnage", True, (0,0,0))
-        screen.blit(titre, (500 - titre.get_width() // 2, 30))
         mouse_x, mouse_y = pygame.mouse.get_pos()
         for perso, pos in perso_positions.items():
             rect = pygame.Rect(pos[0] - 50, pos[1] - 50, 100, 100)
