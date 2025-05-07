@@ -1,3 +1,4 @@
+#import
 import pygame
 from interface_capture import *
 from music import MusicManager
@@ -6,6 +7,8 @@ from load_image import *
 from joueur import *
 from scene_debut import *
 from scene_choix_perso import *
+from scene_maison1 import *
+from scene_maison2 import *
 
 pygame.init()
 
@@ -162,30 +165,10 @@ while running:
 
 
     elif current_scene == "maison1":
-        screen.blit(scenes["maison1"]["fond"], (0, 0))
-        deplacer_joueur(obstacles_maison1, player)
-
-        if passage_rect[4].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 260, 245
-            current_scene = "jeu"
-
-        if player["image"]:
-            screen.blit(player["image"], (player["x"], player["y"]))
+        current_scene = afficher_scene_maison1(screen, scenes["maison1"]["fond"], player)
 
     elif current_scene == "maison2":
-        screen.blit(scenes["maison2"]["fond"], (0, 0))
-        deplacer_joueur(obstacles_maison2, player)
-
-        if passage_rect[8].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 280, 230
-            current_scene = "etage"
-
-        if passage_rect[5].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 635,245
-            current_scene = "jeu"
-
-        if player["image"]:
-            screen.blit(player["image"], (player["x"], player["y"]))
+        current_scene = afficher_scene_maison2(screen, scenes, player)
 
     elif current_scene == "etage":
         screen.blit(scenes["etage"]["fond"], (0, 0))
