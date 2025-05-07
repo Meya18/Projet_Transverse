@@ -58,8 +58,9 @@ perso_sizes = {
 # Redimensionnement
 for key in persos:
     persos[key] = pygame.transform.scale(persos[key], (perso_sizes[key]["width"], perso_sizes[key]["height"]))
+dimensions_perso = 50
 for key in joueur_images:
-    joueur_images[key] = pygame.transform.scale(joueur_images[key], (30, 30))
+    joueur_images[key] = pygame.transform.scale(joueur_images[key], (dimensions_perso, dimensions_perso))
 
 # Positions personnages
 perso_positions = {
@@ -86,7 +87,7 @@ affichage_texte = True
 texte_actuel = ""
 caractere_index = 0
 last_update_time = pygame.time.get_ticks()
-vitesse_texte = 30
+vitesse_texte = 10
 
 # Rectangle de la boîte de dialogue
 dialogue_rect = pygame.Rect(50, 450, 900, 130)
@@ -97,6 +98,9 @@ def afficher_dialogue(screen, font, phrase, texte_actuel, dialogue_rect):
 
     texte_surface = font.render(texte_actuel, True, (0, 0, 0))
     screen.blit(texte_surface, (dialogue_rect.x + 20, dialogue_rect.y + 20))
+
+def get_resized_player_image(player_image, size):
+    return pygame.transform.scale(player_image, (size, size))
 
 # Scènes
 scenes = {
@@ -141,42 +145,47 @@ while running:
         afficher_scene_choix_perso(screen, scenes, persos, perso_positions, perso_sizes, perso_scale, font_nom)
 
     elif current_scene == "jeu":
+        dimensions_perso = 30
         music_manager.set_etat("jeu")
-        deplacer_joueur(obstacles, player)
+        deplacer_joueur(obstacles, player, dimensions_perso)
 
         screen.blit(scenes["jeu"]["fond"], (0, 0))
 
-        if passage_rect[0].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
+        if passage_rect[0].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
             player["x"], player["y"] = 400, 560
             current_scene = "fond2"
 
-        if passage_rect[1].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 290, 530
+        if passage_rect[1].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+            player["x"], player["y"] = 290, 510
             current_scene = "maison1"
 
-        if passage_rect[2].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 400, 560
+        if passage_rect[2].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+            player["x"], player["y"] = 400, 540
             current_scene = "maison2"
 
-        if passage_rect[3].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 440, 550
+        if passage_rect[3].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+            player["x"], player["y"] = 440, 530
             current_scene = "laboratoire"
 
         if player["image"]:
-            screen.blit(player["image"], (player["x"], player["y"]))
+            resized_image = get_resized_player_image(player["image"], dimensions_perso)
+            screen.blit(resized_image, (player["x"], player["y"]))
+
 
 
     elif current_scene == "maison1":
-        current_scene = afficher_scene_maison1(screen, scenes["maison1"]["fond"], player)
+        dimensions_perso = 50
+        current_scene = afficher_scene_maison1(screen, scenes["maison1"]["fond"], player, dimensions_perso)
 
     elif current_scene == "maison2":
-        current_scene = afficher_scene_maison2(screen, scenes, player)
+        dimensions_perso = 50
+        current_scene = afficher_scene_maison2(screen, scenes["maison2"]["fond"], player, dimensions_perso)
 
     elif current_scene == "etage":
         screen.blit(scenes["etage"]["fond"], (0, 0))
-
+        dimensions_perso = 50
         if not affichage_texte:
-            deplacer_joueur(obstacles_etage, player)
+            deplacer_joueur(obstacles_etage, player, dimensions_perso)
 
         if affichage_texte:
             now = pygame.time.get_ticks()
@@ -199,21 +208,24 @@ while running:
                         caractere_index = 0
 
 
-        if passage_rect[6].colliderect(pygame.Rect(player["x"], player["y"], 30, 30)):
-            player["x"], player["y"] = 800,150
+        if passage_rect[6].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+            player["x"], player["y"] = 780,150
             current_scene = "maison2"
 
         if player["image"]:
-            screen.blit(player["image"], (player["x"], player["y"]))
+            resized_image = get_resized_player_image(player["image"], dimensions_perso)
+            screen.blit(resized_image, (player["x"], player["y"]))
 
     elif current_scene == "laboratoire":
-        current_scene = afficher_scene_laboratoire(screen, scenes, player)
+        dimensions_perso = 50
+        current_scene = afficher_scene_laboratoire(screen, scenes, player, dimensions_perso)
 
     elif current_scene == "fond2":
-        deplacer_joueur(obstacles_fond2, player)
+        dimensions_perso = 30
+        deplacer_joueur(obstacles_fond2, player, dimensions_perso)
         screen.blit(scenes["fond2"]["fond"], (0, 0))
 
-        player_rect = pygame.Rect(player["x"], player["y"], 30, 30)
+        player_rect = pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)
 
         if passage_rect[7].colliderect(player_rect):
             player["x"], player["y"] = 530, 30
@@ -225,7 +237,8 @@ while running:
             interface_capture(screen)
 
         if player["image"]:
-            screen.blit(player["image"], (player["x"], player["y"]))
+            resized_image = get_resized_player_image(player["image"], dimensions_perso)
+            screen.blit(resized_image, (player["x"], player["y"]))
 
     pygame.display.flip()
     clock.tick(60)
