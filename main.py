@@ -4,6 +4,7 @@ from music import MusicManager
 from obstacles import *
 from load_image import *
 from joueur import *
+from scene_debut import *
 
 pygame.init()
 
@@ -128,17 +129,7 @@ while running:
     screen.fill((255,255,255))
 
     if current_scene == "debut":
-        screen.blit(scenes["debut"]["fond"], (0, 0))
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        if button_rect.collidepoint(mouse_x, mouse_y):
-            if bouton_scale > 0.9:
-                bouton_scale -= 0.01
-        else:
-            if bouton_scale < 1.0:
-                bouton_scale += 0.01
-        scaled_bouton = pygame.transform.scale(bouton_debut, (int(bouton_largeur * bouton_scale), int(bouton_hauteur * bouton_scale)))
-        scaled_rect = scaled_bouton.get_rect(center=button_rect.center)
-        screen.blit(scaled_bouton, scaled_rect.topleft)
+        bouton_scale = afficher_scene_debut(screen, scenes, button_rect, bouton_debut, bouton_scale)
 
     elif current_scene == "choix_perso":
         screen.blit(scenes["choix_perso"]["fond"], (0, 0))
