@@ -13,6 +13,8 @@ maison1 = load_and_scale("images/maison1.jpg", (1000, 600))
 maison2 = load_and_scale("images/maison2.png", (1000, 600))
 etage = load_and_scale("images/etage.png", (1000, 600))
 laboratoire = load_and_scale("images/laboratoire.png", (1000, 600))
+fond_capture = load_and_scale("images/fond_combat.jpg", (1000, 600))
+fond_victoire = load_and_scale("images/fond_victoire.png", (1000, 600))
 
 #bouton du début
 bouton_debut = pygame.image.load("images/bouton_debut.png")

@@ -16,7 +16,7 @@ from scene_laboratoire import *
 pygame.init()
 
 # État initial
-game_start_ticks = pygame.time.get_ticks()  # démarre le chrono
+game_start_ticks = pygame.time.get_ticks()
 game_won = False
 show_inventory = False
 victory_time_ms = 0
@@ -26,6 +26,7 @@ musique_accueil_jouee = False
 # Définition de la fenêtre
 screen = pygame.display.set_mode((1000, 600))
 pygame.display.set_caption("Jeu Team Rocket")
+
 # fonction pour dessiner l’inventaire sur toutes les scènes
 def draw_inventory(surface):
     total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
@@ -126,7 +127,8 @@ scenes = {
     "maison1": {"fond": maison1, "persos": persos},
     "maison2": {"fond": maison2, "persos": persos},
     "etage": {"fond": etage, "persos": persos},
-    "laboratoire": {"fond": laboratoire, "persos": persos}
+    "laboratoire": {"fond": laboratoire, "persos": persos},
+    "fond_victoire": {"fond": fond_victoire, "persos": persos},
 }
 
 current_scene = "debut"
@@ -161,7 +163,7 @@ while running:
         minutes = total_s // 60
         seconds = total_s % 60
         # fond victoire
-        screen.fill((255, 255, 255))
+        screen.blit(scenes["fond_victoire"]["fond"], (0, 0))
         # dessiner l’inventaire centré
         total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
         start_x = (WIDTH - total_w) // 2
@@ -181,7 +183,7 @@ while running:
         screen.blit(timer_surf, timer_rect)
         pygame.display.flip()
         continue
-    screen.fill((255, 255, 255))
+    screen.blit(scenes["fond_victoire"]["fond"], (0, 0))
 
 
     if current_scene == "debut":

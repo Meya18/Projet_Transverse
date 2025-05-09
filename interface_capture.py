@@ -179,7 +179,7 @@ def interface_capture(surface,player_image):
     random_key = random.choice(list(pokemons.keys()))
     cible = Cible(pokemons[random_key], (800, 400))
     chargeur = Chargeur()
-    fond = pygame.transform.scale(pygame.image.load("images/fond_combat.jpg").convert(), (WIDTH, HEIGHT))
+    fond = fond_capture
     # préparer l’image du joueur passée en paramètre
     player_img = pygame.transform.scale(player_image, (60, 60))
     player_pos = (balle.start_pos[0] - 70, balle.start_pos[1])
