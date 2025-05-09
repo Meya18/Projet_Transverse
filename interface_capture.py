@@ -10,11 +10,19 @@ TARGET_RADIUS = 30
 GRAVITY = 25
 POWER_MAX = 20
 SPEED_FACTOR = 5  # Vitesse d'affichage de la trajectoire
-
+# inventaire des cibles capturées
+inventory = []
+INVENTORY_SLOTS = 6
+SLOT_SIZE = 50
+SLOT_MARGIN = 10
 
 def trajectoire(V0, theta_deg, x0=0, y0=0, g=GRAVITY):
     theta = math.radians(theta_deg)
-    t_flight = (2 * V0 * math.sin(theta)) / g
+    # tenir compte de la hauteur initiale h0 = (écran bas) – y0
+    h0 = HEIGHT - y0
+    # résolution de -½gt² + V0·sinθ·t + h0 = 0
+    D = (V0 * math.sin(theta)) ** 2 + 2 * g * h0
+    t_flight = (V0 * math.sin(theta) + math.sqrt(D)) / g
     num_points = int(t_flight * 60)
     if num_points < 2:
         num_points = 2
@@ -25,9 +33,10 @@ def trajectoire(V0, theta_deg, x0=0, y0=0, g=GRAVITY):
     for i in range(num_points):
         t = i * t_flight / (num_points - 1)
         x = V0 * math.cos(theta) * t
-        y = V0 * math.sin(theta) * t - 0.5 * g * t**2
+        # calcul de la hauteur h par rapport au bas
+        h = h0 + V0 * math.sin(theta) * t - 0.5 * g * t ** 2
         x_values.append(x0 + x)
-        y_values.append(y0 - y)  # car l'axe Y descend en Pygame
+        y_values.append(HEIGHT - h)
 
     return x_values, y_values, t_flight
 
@@ -97,35 +106,30 @@ class Balle:
 class Cible:
     def __init__(self, image_surface, center_pos):
         self.img = pygame.transform.scale(image_surface, (60, 60))
-        self.rect = self.img.get_rect(center=center_pos)
-        self.hit = False
+        # placer la cible au sol, et ne bouger qu’horizontalement
+        self.rect = self.img.get_rect(center=(center_pos[0], HEIGHT - TARGET_RADIUS))
         self.speed = 2
-        self.dx = random.choice([-1, 0, 1])
-        self.dy = random.choice([-1, 0, 1])
+        self.dx = random.choice([-1, 1])
+        self.dy = 0
+        self.hit = False
         self.frame_count = 0
 
     def update(self):
         self.frame_count += 1
         if self.frame_count % 60 == 0:
-            self.dx = random.choice([-1, 0, 1])
-            self.dy = random.choice([-1, 0, 1])
-
+            # ne changer que la direction horizontale
+            self.dx = random.choice([-1, 1])
+            self.dy = 0
+        # déplacement horizontal seul et maintien au sol
         self.rect.x += self.dx * self.speed
-        self.rect.y += self.dy * self.speed
-
+        self.rect.centery = HEIGHT - TARGET_RADIUS
+        # rebondir entre la moitié droite et le bord droit
         if self.rect.left < WIDTH // 2:
             self.rect.left = WIDTH // 2
             self.dx *= -1
         elif self.rect.right > WIDTH:
             self.rect.right = WIDTH
             self.dx *= -1
-
-        if self.rect.top < 0:
-            self.rect.top = 0
-            self.dy *= -1
-        elif self.rect.bottom > HEIGHT:
-            self.rect.bottom = HEIGHT
-            self.dy *= -1
 
     def check_collision(self, ball_pos):
         dist = math.hypot(ball_pos[0] - self.rect.centerx, ball_pos[1] - self.rect.centery)
@@ -155,8 +159,8 @@ class Chargeur:
         self.power = 0
 
 
-def interface_capture(surface):
-    balle = Balle("images/pokeball.png", (100, HEIGHT - 100))
+def interface_capture(surface,player_image):
+    balle = Balle("images/pokeball.png", (100, HEIGHT - 400))
     pokemons = {
         "carapuce": carapuce,
         "darkrai" : darkrai,
@@ -176,7 +180,20 @@ def interface_capture(surface):
     cible = Cible(pokemons[random_key], (800, 400))
     chargeur = Chargeur()
     fond = pygame.transform.scale(pygame.image.load("images/fond_combat.jpg").convert(), (WIDTH, HEIGHT))
-
+    # préparer l’image du joueur passée en paramètre
+    player_img = pygame.transform.scale(player_image, (60, 60))
+    player_pos = (balle.start_pos[0] - 70, balle.start_pos[1])
+    # fonction interne pour dessiner l'inventaire
+    def draw_inventory(surface):
+        total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
+        start_x = SLOT_MARGIN
+        y = HEIGHT - SLOT_SIZE - SLOT_MARGIN
+        for i in range(INVENTORY_SLOTS):
+            x = start_x + i * (SLOT_SIZE + SLOT_MARGIN)
+            pygame.draw.rect(surface, (200, 200, 200), (x, y, SLOT_SIZE, SLOT_SIZE), 2)
+            if i < len(inventory):
+                img = pygame.transform.scale(inventory[i], (SLOT_SIZE - 4, SLOT_SIZE - 4))
+                surface.blit(img, (x + 2, y + 2))
     clock = pygame.time.Clock()
     running = True
 
@@ -200,16 +217,25 @@ def interface_capture(surface):
                 cible.hit = False
 
         surface.blit(fond, (0, 0))
+        draw_inventory(surface)
         chargeur.update()
         chargeur.draw(surface)
         cible.update()
         cible.draw(surface)
+        surface.blit(
+            player_img,
+            player_img.get_rect(center=player_pos)
+        )
         balle.update()
         balle.draw(surface)
 
         if balle.fired and cible.check_collision(balle.pos):
             cible.hit = True
+            # stocker l'image de la cible si place dispo
+            if len(inventory) < INVENTORY_SLOTS:
+                inventory.append(pokemons[random_key])
             balle.reset((100, HEIGHT - 100))
-
+            return  # quitte le mini-jeu et revient à la scène précédente
         pygame.display.flip()
         clock.tick(60)
+

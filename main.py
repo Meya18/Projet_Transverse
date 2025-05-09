@@ -1,6 +1,7 @@
 #import
 import pygame
 from interface_capture import *
+from interface_capture import inventory, INVENTORY_SLOTS, SLOT_SIZE, SLOT_MARGIN, WIDTH, HEIGHT
 from music import MusicManager
 from obstacles import *
 from load_image import *
@@ -15,13 +16,27 @@ from scene_laboratoire import *
 pygame.init()
 
 # État initial
+game_start_ticks = pygame.time.get_ticks()  # démarre le chrono
+game_won = False
+show_inventory = False
+victory_time_ms = 0
 etat_jeu = "debut"
 musique_accueil_jouee = False
 
 # Définition de la fenêtre
 screen = pygame.display.set_mode((1000, 600))
 pygame.display.set_caption("Jeu Team Rocket")
-
+# fonction pour dessiner l’inventaire sur toutes les scènes
+def draw_inventory(surface):
+    total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
+    start_x = SLOT_MARGIN
+    y = HEIGHT - SLOT_SIZE - SLOT_MARGIN
+    for i in range(INVENTORY_SLOTS):
+        x = start_x + i * (SLOT_SIZE + SLOT_MARGIN)
+        pygame.draw.rect(surface, (200, 200, 200), (x, y, SLOT_SIZE, SLOT_SIZE), 2)
+        if i < len(inventory):
+            img = pygame.transform.scale(inventory[i], (SLOT_SIZE - 4, SLOT_SIZE - 4))
+            surface.blit(img, (x + 2, y + 2))
 music_manager = MusicManager()
 music_manager.set_etat("intro")
 
@@ -120,7 +135,7 @@ player = {"x": 385, "y": 370, "speed": 4, "image": None}
 # Boucle du jeu
 running = True
 clock = pygame.time.Clock()
-
+capture_cooldown = False
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -133,10 +148,41 @@ while running:
                     rect = pygame.Rect(pos[0] - 50, pos[1] - 50, 100, 100)
                     if rect.collidepoint(event.pos):
                         player["image"] = joueur_images[perso]
+                        player["capture_image"] = persos[perso]
                         scenes["jeu"]["joueur"] = player
                         current_scene = "etage"
+    # écran de victoire si l'inventaire est plein
+    if len(inventory) >= INVENTORY_SLOTS:
+        if not game_won:
+            victory_time_ms = pygame.time.get_ticks() - game_start_ticks
+            game_won = True
+        # calcul du temps gelé
+        total_s = victory_time_ms // 1000
+        minutes = total_s // 60
+        seconds = total_s % 60
+        # fond victoire
+        screen.fill((255, 255, 255))
+        # dessiner l’inventaire centré
+        total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
+        start_x = (WIDTH - total_w) // 2
+        y_inv = (HEIGHT - SLOT_SIZE) // 2
+        for i in range(INVENTORY_SLOTS):
+            x = start_x + i * (SLOT_SIZE + SLOT_MARGIN)
+            # tracer chaque case
+            pygame.draw.rect(screen, (0, 0, 0), (x, y_inv, SLOT_SIZE, SLOT_SIZE), 2)
+            # si un item capturé correspond, l’afficher
+            if i < len(inventory):
+                img = pygame.transform.scale(inventory[i], (SLOT_SIZE - 4, SLOT_SIZE - 4))
+                screen.blit(img, (x + 2, y_inv + 2))
+        # afficher le temps gelé au-dessus
+        timer_text = f"Temps de jeu : {minutes}m{seconds}s"
+        timer_surf = font_nom.render(timer_text, True, (0, 0, 0))
+        timer_rect = timer_surf.get_rect(center=(WIDTH // 2, y_inv - 30))
+        screen.blit(timer_surf, timer_rect)
+        pygame.display.flip()
+        continue
+    screen.fill((255, 255, 255))
 
-    screen.fill((255,255,255))
 
     if current_scene == "debut":
         bouton_scale = afficher_scene_debut(screen, scenes, button_rect, bouton_debut, bouton_scale)
@@ -203,6 +249,7 @@ while running:
                     phrase_index += 1
                     if phrase_index >= len(phrases_etage):
                         affichage_texte = False
+                        show_inventory = True
                     else:
                         texte_actuel = ""
                         caractere_index = 0
@@ -231,14 +278,19 @@ while running:
             player["x"], player["y"] = 530, 30
             current_scene = "jeu"
 
-        if 0 <= player["x"] <= 970 and 0 <= player["y"] <= 570 and any(
-                player_rect.colliderect(obs) for obs in capture_fond2):
+        # ne lancer le mini-jeu qu’une seule fois à l’entrée
+        colliding = (0 <= player["x"] <= 970 and 0 <= player["y"] <= 570 and any(player_rect.colliderect(obs) for obs in capture_fond2))
+        if colliding and not capture_cooldown:
             music_manager.set_etat("combat")
-            interface_capture(screen)
-
+            interface_capture(screen, player["capture_image"])
+            capture_cooldown = True
+        elif not colliding:
+            capture_cooldown = False
         if player["image"]:
             resized_image = get_resized_player_image(player["image"], dimensions_perso)
             screen.blit(resized_image, (player["x"], player["y"]))
+    if show_inventory and len(inventory) < INVENTORY_SLOTS:
+        draw_inventory(screen)
 
     pygame.display.flip()
     clock.tick(60)
