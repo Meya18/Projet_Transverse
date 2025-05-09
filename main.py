@@ -167,7 +167,7 @@ while running:
         # dessiner l’inventaire centré
         total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
         start_x = (WIDTH - total_w) // 2
-        y_inv = (HEIGHT - SLOT_SIZE) // 2
+        y_inv = (HEIGHT - SLOT_SIZE) // 2 + 100
         for i in range(INVENTORY_SLOTS):
             x = start_x + i * (SLOT_SIZE + SLOT_MARGIN)
             # tracer chaque case
@@ -283,7 +283,6 @@ while running:
         # ne lancer le mini-jeu qu’une seule fois à l’entrée
         colliding = (0 <= player["x"] <= 970 and 0 <= player["y"] <= 570 and any(player_rect.colliderect(obs) for obs in capture_fond2))
         if colliding and not capture_cooldown:
-            music_manager.set_etat("combat")
             interface_capture(screen, player["capture_image"])
             capture_cooldown = True
         elif not colliding:

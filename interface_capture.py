@@ -1,6 +1,7 @@
 import pygame
 import math
 import random
+from music import *
 from load_image import *
 
 # Constantes
@@ -15,6 +16,7 @@ inventory = []
 INVENTORY_SLOTS = 6
 SLOT_SIZE = 50
 SLOT_MARGIN = 10
+music_manager = MusicManager()
 
 def trajectoire(V0, theta_deg, x0=0, y0=0, g=GRAVITY):
     theta = math.radians(theta_deg)
@@ -198,6 +200,7 @@ def interface_capture(surface,player_image):
     running = True
 
     while running:
+        music_manager.set_etat("combat")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -235,6 +238,7 @@ def interface_capture(surface,player_image):
             if len(inventory) < INVENTORY_SLOTS:
                 inventory.append(pokemons[random_key])
             balle.reset((100, HEIGHT - 100))
+            music_manager.set_etat("jeu")
             return  # quitte le mini-jeu et revient à la scène précédente
         pygame.display.flip()
         clock.tick(60)
