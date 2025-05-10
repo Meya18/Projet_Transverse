@@ -11,6 +11,7 @@ from scene_choix_perso import *
 from scene_maison1 import *
 from scene_maison2 import *
 from scene_laboratoire import *
+from debug import *
 
 
 pygame.init()
@@ -118,6 +119,7 @@ def afficher_dialogue(screen, font, phrase, texte_actuel, dialogue_rect):
 def get_resized_player_image(player_image, size):
     return pygame.transform.scale(player_image, (size, size))
 
+
 # Scènes
 scenes = {
     "debut": {"fond": debut_image, "bouton": bouton_debut},
@@ -197,6 +199,7 @@ while running:
         dimensions_perso = 30
         music_manager.set_etat("jeu")
         deplacer_joueur(obstacles, player, dimensions_perso)
+        trace(POSITION, f"x: {player['x']}, y: {player['y']}")
 
         screen.blit(scenes["jeu"]["fond"], (0, 0))
 
@@ -204,25 +207,25 @@ while running:
             player["x"], player["y"] = 400, 560
             current_scene = "fond2"
 
-        if passage_rect[1].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+        elif passage_rect[1].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
             player["x"], player["y"] = 290, 510
             current_scene = "maison1"
 
-        if passage_rect[2].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+        elif passage_rect[2].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
             player["x"], player["y"] = 400, 540
             current_scene = "maison2"
 
-        if passage_rect[3].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+        elif passage_rect[3].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
             player["x"], player["y"] = 440, 530
             current_scene = "laboratoire"
 
-        if player["image"]:
+        elif player["image"]:
             resized_image = get_resized_player_image(player["image"], dimensions_perso)
             screen.blit(resized_image, (player["x"], player["y"]))
 
     elif current_scene == "laboratoire":
         dimensions_perso = 50
-        current_scene = afficher_scene_laboratoire(screen, scenes, player, dimensions_perso)
+        current_scene = afficher_scene_laboratoire(screen, scenes["laboratoire"]["fond"], player, dimensions_perso)
 
     elif current_scene == "maison1":
         dimensions_perso = 50
