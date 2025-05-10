@@ -164,6 +164,7 @@ while running:
         seconds = total_s % 60
         # fond victoire
         screen.blit(scenes["fond_victoire"]["fond"], (0, 0))
+        music_manager.set_etat("fin")
         # dessiner l’inventaire centré
         total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
         start_x = (WIDTH - total_w) // 2
@@ -219,7 +220,9 @@ while running:
             resized_image = get_resized_player_image(player["image"], dimensions_perso)
             screen.blit(resized_image, (player["x"], player["y"]))
 
-
+    elif current_scene == "laboratoire":
+        dimensions_perso = 50
+        current_scene = afficher_scene_laboratoire(screen, scenes, player, dimensions_perso)
 
     elif current_scene == "maison1":
         dimensions_perso = 50
@@ -264,10 +267,6 @@ while running:
         if player["image"]:
             resized_image = get_resized_player_image(player["image"], dimensions_perso)
             screen.blit(resized_image, (player["x"], player["y"]))
-
-    elif current_scene == "laboratoire":
-        dimensions_perso = 50
-        current_scene = afficher_scene_laboratoire(screen, scenes, player, dimensions_perso)
 
     elif current_scene == "fond2":
         dimensions_perso = 30
