@@ -110,7 +110,7 @@ class Balle:
 
 class Cible:
     def __init__(self, image_surface, center_pos):
-        self.img = pygame.transform.scale(image_surface, (60, 60))
+        self.img = self.scale_image_keep_ratio(image_surface, 110)
         # placer la cible au sol, et ne bouger qu’horizontalement
         self.rect = self.img.get_rect(center=(center_pos[0], HEIGHT - TARGET_RADIUS))
         self.speed = 2
@@ -150,6 +150,19 @@ class Cible:
         win.blit(self.img, self.rect)
         if self.hit:
             pygame.draw.circle(win, (0, 255, 0), self.rect.center, TARGET_RADIUS, 3)
+
+    def scale_image_keep_ratio(self, image, target_size):
+        rect = image.get_rect()
+        width, height = rect.width, rect.height
+
+        if width > height:
+            new_width = target_size
+            new_height = int(height * target_size / width)
+        else:
+            new_height = target_size
+            new_width = int(width * target_size / height)
+
+        return pygame.transform.smoothscale(image, (new_width, new_height))
 
 
 class Chargeur:
