@@ -82,7 +82,7 @@ phrases_etage = [
     "Ton objectif est de capturer des Pokémon sauvages.",
     "Rends toi dans les hautes herbes pour les trouver.",
     "Utilise les touches directionnelles pour te déplacer.",
-    "Appuie sur la touche I pour voir ton inventaire",
+    "Appuie sur la touche I pour voir ton inventaire.",
     "Bonne chance !"
 ]
 
