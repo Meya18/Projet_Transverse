@@ -106,6 +106,7 @@ def afficher_dialogue(screen, font, phrase, texte_actuel, dialogue_rect):
 def get_resized_player_image(player_image, size):
     return pygame.transform.scale(player_image, (size, size))
 
+
 # Scènes
 scenes = {
     "debut": {"fond": debut_image, "bouton": bouton_debut},
@@ -116,7 +117,7 @@ scenes = {
     "maison2": {"fond": maison2, "persos": persos},
     "etage": {"fond": etage, "persos": persos},
     "laboratoire": {"fond": laboratoire, "persos": persos},
-"fond_victoire": {"fond": fond_victoire, "persos": persos},
+    "fond_victoire": {"fond": fond_victoire, "persos": persos},
 }
 
 current_scene = "debut"
