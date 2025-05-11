@@ -82,6 +82,7 @@ phrases_etage = [
     "Ton objectif est de capturer des Pokémon sauvages.",
     "Rends toi dans les hautes herbes pour les trouver.",
     "Utilise les touches directionnelles pour te déplacer.",
+    "Appuie sur la touche I pour voir ton inventaire",
     "Bonne chance !"
 ]
 
@@ -156,7 +157,7 @@ while running:
         draw_inventory(screen)
         timer_text = f"Temps de jeu : {minutes}m{seconds}s"
         timer_surf = font_nom.render(timer_text, True, (0, 0, 0))
-        timer_rect = timer_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
+        timer_rect = timer_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2))
         screen.blit(timer_surf, timer_rect)
         pygame.display.flip()
         continue
