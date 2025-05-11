@@ -225,7 +225,7 @@ def draw_inventory_final(surface, final):
         y_offset = 0
         if final:
             y_offset = 150
-        panel_pos = (SLOT_MARGIN, HEIGHT - panel_h + 200 + +150)
+        panel_pos = (SLOT_MARGIN, HEIGHT - panel_h + 200 + 150)
     surface.blit(panel_img, panel_pos)
     border = 10
     slot_w = (panel_w - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS - 12
