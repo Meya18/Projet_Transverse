@@ -156,6 +156,8 @@ while running:
         seconds = total_s % 60
         screen.blit(scenes["fond_victoire"]["fond"], (0, 0))
         music_manager.set_etat("fin")
+        if inventory_visible:
+            inventory_visible = False
         draw_inventory_final(screen,game_won)
         timer_text = f"Temps de jeu : {minutes}m{seconds}s"
         timer_surf = font_nom.render(timer_text, True, (0, 0, 0))

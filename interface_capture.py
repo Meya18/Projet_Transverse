@@ -215,21 +215,23 @@ def draw_inventory(surface, final):
         surface.blit(scaled_img, (x, y))
 
 def draw_inventory_final(surface, final):
-    global panel_img, panel_w, panel_h, panel_pos
-    if panel_img is None:
+    panel_img2=None
+    panel_w2 = panel_h2 = 0
+    panel_pos2 = (0, 0)
+    if panel_img2 is None:
         raw = pygame.image.load("images/inventaire.png").convert_alpha()
         rw, rh = raw.get_size()
-        panel_w = WIDTH - 2 * SLOT_MARGIN
-        panel_h = int(rh * panel_w / rw)
-        panel_img = pygame.transform.scale(raw, (panel_w, panel_h))
+        panel_w2 = WIDTH - 2 * SLOT_MARGIN
+        panel_h2 = int(rh * panel_w / rw)
+        panel_img2 = pygame.transform.scale(raw, (panel_w2, panel_h2))
         y_offset = 0
         if final:
             y_offset = 150
-        panel_pos = (SLOT_MARGIN, HEIGHT - panel_h + 200 + 150)
-    surface.blit(panel_img, panel_pos)
+        panel_pos2 = (SLOT_MARGIN, HEIGHT - panel_h + 200 + 150)
+    surface.blit(panel_img2, panel_pos2)
     border = 10
-    slot_w = (panel_w - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS - 12
-    slot_h = panel_h - 2 * border
+    slot_w = (panel_w2 - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS - 12
+    slot_h = panel_h2 - 2 * border
     max_icon_size = int(min(slot_w, slot_h) * 0.9)
 
     for i, slot in enumerate(inventory):
@@ -243,8 +245,8 @@ def draw_inventory_final(surface, final):
             new_w = int(w * new_h / h)
 
         scaled_img = pygame.transform.smoothscale(slot, (new_w, new_h))
-        x = panel_pos[0] + border + i * (slot_w + border) + (slot_w - new_w) // 2 + 35-i
-        y = panel_pos[1] + border + (slot_h - new_h) // 2 - 35-i
+        x = panel_pos2[0] + border + i * (slot_w + border) + (slot_w - new_w) // 2 + 35-i
+        y = panel_pos2[1] + border + (slot_h - new_h) // 2 - 35-i
         surface.blit(scaled_img, (x, y))
 def interface_capture(surface,player_image):
     start_pos = (100, HEIGHT - 100)
