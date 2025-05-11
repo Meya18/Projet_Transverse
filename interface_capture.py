@@ -176,7 +176,7 @@ def draw_inventory(surface):
         panel_w = WIDTH - 2 * SLOT_MARGIN
         panel_h = int(rh * panel_w / rw)
         panel_img = pygame.transform.scale(raw, (panel_w, panel_h))
-        panel_pos = (SLOT_MARGIN, HEIGHT - panel_h - SLOT_MARGIN)
+        panel_pos = (SLOT_MARGIN, HEIGHT - panel_h +350)
     surface.blit(panel_img, panel_pos)
     border = 10
     slot_w = (panel_w - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS
