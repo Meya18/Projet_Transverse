@@ -193,12 +193,23 @@ def draw_inventory(surface):
     surface.blit(panel_img, panel_pos)
     border = 10
     slot_w = (panel_w - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS
-    icon_s = slot_w - 50
+    slot_h = panel_h - 2 * border
+    max_icon_size = int(min(slot_w, slot_h) * 0.9)
+
     for i, slot in enumerate(inventory):
-        img = pygame.transform.scale(slot, (int(icon_s), int(icon_s)))
-        x = panel_pos[0] + i * slot_w + (slot_w - icon_s) // 2 + 20
-        y = panel_pos[1] + (panel_h - icon_s) // 2 -20
-        surface.blit(img, (x, y))
+        img_rect = slot.get_rect()
+        w, h = img_rect.size
+        if w > h:
+            new_w = max_icon_size
+            new_h = int(h * new_w / w)
+        else:
+            new_h = max_icon_size
+            new_w = int(w * new_h / h)
+
+        scaled_img = pygame.transform.smoothscale(slot, (new_w, new_h))
+        x = panel_pos[0] + border + i * (slot_w + border) + (slot_w - new_w) // 2
+        y = panel_pos[1] + border + (slot_h - new_h) // 2
+        surface.blit(scaled_img, (x, y))
 def interface_capture(surface,player_image):
     start_pos = (100, HEIGHT - 100)
     balle = Balle("images/pokeball.png", start_pos)
