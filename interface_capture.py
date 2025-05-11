@@ -368,4 +368,3 @@ def interface_capture(surface,player_image):
 
         pygame.display.flip()
         clock.tick(60)
-
