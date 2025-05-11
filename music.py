@@ -7,6 +7,7 @@ pygame.mixer.init()
 MUSIQUE_INTRO = "musique/musique_intro.mp3"
 MUSIQUE_JEU = "musique/musique_jeu.mp3"
 MUSIQUE_COMBAT = "musique/musique_combat.mp3"
+MUSIQUE_FIN = "musique/musique_fin.mp3"
 
 class MusicManager:
     def __init__(self):
@@ -36,6 +37,9 @@ class MusicManager:
 
         elif nouvel_etat == "combat":
             self.jouer_musique(MUSIQUE_COMBAT)
+
+        elif nouvel_etat == "fin":
+            self.jouer_musique(MUSIQUE_FIN)
 
     def gerer_evenement(self, event):
         if event.type == pygame.USEREVENT and self.etat == "capture":
