@@ -1,7 +1,6 @@
 #import
 import pygame
-from interface_capture import *
-from interface_capture import inventory, INVENTORY_SLOTS, SLOT_SIZE, SLOT_MARGIN, WIDTH, HEIGHT
+from interface_capture import interface_capture, draw_inventory, inventory, INVENTORY_SLOTS, WIDTH, HEIGHT
 from music import MusicManager
 from obstacles import *
 from load_image import *
@@ -18,7 +17,7 @@ pygame.init()
 # État initial
 game_start_ticks = pygame.time.get_ticks()  # démarre le chrono
 game_won = False
-show_inventory = False
+inventory_visible = False
 victory_time_ms = 0
 etat_jeu = "debut"
 musique_accueil_jouee = False
@@ -26,17 +25,6 @@ musique_accueil_jouee = False
 # Définition de la fenêtre
 screen = pygame.display.set_mode((1000, 600))
 pygame.display.set_caption("Jeu Team Rocket")
-# fonction pour dessiner l’inventaire sur toutes les scènes
-def draw_inventory(surface):
-    total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
-    start_x = SLOT_MARGIN
-    y = HEIGHT - SLOT_SIZE - SLOT_MARGIN
-    for i in range(INVENTORY_SLOTS):
-        x = start_x + i * (SLOT_SIZE + SLOT_MARGIN)
-        pygame.draw.rect(surface, (200, 200, 200), (x, y, SLOT_SIZE, SLOT_SIZE), 2)
-        if i < len(inventory):
-            img = pygame.transform.scale(inventory[i], (SLOT_SIZE - 4, SLOT_SIZE - 4))
-            surface.blit(img, (x + 2, y + 2))
 music_manager = MusicManager()
 music_manager.set_etat("intro")
 
@@ -140,6 +128,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_i:
+            if not game_won:
+                inventory_visible = not inventory_visible
         if event.type == pygame.MOUSEBUTTONDOWN:
             if current_scene == "debut" and button_rect.collidepoint(event.pos):
                 current_scene = "choix_perso"
@@ -151,33 +142,20 @@ while running:
                         player["capture_image"] = persos[perso]
                         scenes["jeu"]["joueur"] = player
                         current_scene = "etage"
-    # écran de victoire si l'inventaire est plein
+      # écran de victoire si l'inventaire est plein
+
     if len(inventory) >= INVENTORY_SLOTS:
         if not game_won:
             victory_time_ms = pygame.time.get_ticks() - game_start_ticks
             game_won = True
-        # calcul du temps gelé
         total_s = victory_time_ms // 1000
         minutes = total_s // 60
         seconds = total_s % 60
-        # fond victoire
         screen.fill((255, 255, 255))
-        # dessiner l’inventaire centré
-        total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
-        start_x = (WIDTH - total_w) // 2
-        y_inv = (HEIGHT - SLOT_SIZE) // 2
-        for i in range(INVENTORY_SLOTS):
-            x = start_x + i * (SLOT_SIZE + SLOT_MARGIN)
-            # tracer chaque case
-            pygame.draw.rect(screen, (0, 0, 0), (x, y_inv, SLOT_SIZE, SLOT_SIZE), 2)
-            # si un item capturé correspond, l’afficher
-            if i < len(inventory):
-                img = pygame.transform.scale(inventory[i], (SLOT_SIZE - 4, SLOT_SIZE - 4))
-                screen.blit(img, (x + 2, y_inv + 2))
-        # afficher le temps gelé au-dessus
+        draw_inventory(screen)
         timer_text = f"Temps de jeu : {minutes}m{seconds}s"
         timer_surf = font_nom.render(timer_text, True, (0, 0, 0))
-        timer_rect = timer_surf.get_rect(center=(WIDTH // 2, y_inv - 30))
+        timer_rect = timer_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
         screen.blit(timer_surf, timer_rect)
         pygame.display.flip()
         continue
@@ -289,7 +267,7 @@ while running:
         if player["image"]:
             resized_image = get_resized_player_image(player["image"], dimensions_perso)
             screen.blit(resized_image, (player["x"], player["y"]))
-    if show_inventory and len(inventory) < INVENTORY_SLOTS:
+    if (inventory_visible or game_won):
         draw_inventory(screen)
 
     pygame.display.flip()

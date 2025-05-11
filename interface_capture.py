@@ -12,10 +12,13 @@ POWER_MAX = 20
 SPEED_FACTOR = 5  # Vitesse d'affichage de la trajectoire
 # inventaire des cibles capturées
 inventory = []
+INVENTORY_PANEL_HEIGHT = 150
 INVENTORY_SLOTS = 6
-SLOT_SIZE = 50
+SLOT_SIZE = 20
 SLOT_MARGIN = 10
-
+panel_img = None
+panel_w = panel_h = 0
+panel_pos = (0, 0)
 def trajectoire(V0, theta_deg, x0=0, y0=0, g=GRAVITY):
     theta = math.radians(theta_deg)
     # tenir compte de la hauteur initiale h0 = (écran bas) – y0
@@ -109,20 +112,20 @@ class Cible:
         # placer la cible au sol, et ne bouger qu’horizontalement
         self.rect = self.img.get_rect(center=(center_pos[0], HEIGHT - TARGET_RADIUS))
         self.speed = 2
-        self.dx = random.choice([-1, 1])
-        self.dy = 0
+        self.dx = random.choice([-1, 0, 1])
+        self.dy = random.choice([-1, 0, 1])
         self.hit = False
         self.frame_count = 0
 
     def update(self):
         self.frame_count += 1
         if self.frame_count % 60 == 0:
-            # ne changer que la direction horizontale
-            self.dx = random.choice([-1, 1])
-            self.dy = 0
-        # déplacement horizontal seul et maintien au sol
+            # bouger horizontalement et verticalement
+            self.dx = random.choice([-1, 0, 1])
+            self.dy = random.choice([-1, 0, 1])
+        # déplacement horizontal et vertical
         self.rect.x += self.dx * self.speed
-        self.rect.centery = HEIGHT - TARGET_RADIUS
+        self.rect.y += self.dy * self.speed
         # rebondir entre la moitié droite et le bord droit
         if self.rect.left < WIDTH // 2:
             self.rect.left = WIDTH // 2
@@ -130,6 +133,12 @@ class Cible:
         elif self.rect.right > WIDTH:
             self.rect.right = WIDTH
             self.dx *= -1
+        if self.rect.top < HEIGHT // 2:
+            self.rect.top = HEIGHT // 2
+            self.dy *= -1
+        elif self.rect.bottom > HEIGHT:
+            self.rect.bottom = HEIGHT
+            self.dy *= -1
 
     def check_collision(self, ball_pos):
         dist = math.hypot(ball_pos[0] - self.rect.centerx, ball_pos[1] - self.rect.centery)
@@ -157,10 +166,27 @@ class Chargeur:
     def reset(self):
         self.charging = False
         self.power = 0
-
-
+def draw_inventory(surface):
+    global panel_img, panel_w, panel_h, panel_pos
+    if panel_img is None:
+        raw = pygame.image.load("images/inventaire.png").convert_alpha()
+        rw, rh = raw.get_size()
+        panel_w = WIDTH - 2 * SLOT_MARGIN
+        panel_h = int(rh * panel_w / rw)
+        panel_img = pygame.transform.scale(raw, (panel_w, panel_h))
+        panel_pos = (SLOT_MARGIN, HEIGHT - panel_h - SLOT_MARGIN)
+    surface.blit(panel_img, panel_pos)
+    border = 10
+    slot_w = (panel_w - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS
+    icon_s = slot_w - 50
+    for i, slot in enumerate(inventory):
+        img = pygame.transform.scale(slot, (int(icon_s), int(icon_s)))
+        x = panel_pos[0] + i * slot_w + (slot_w - icon_s) // 2 + 20
+        y = panel_pos[1] + (panel_h - icon_s) // 2 -20
+        surface.blit(img, (x, y))
 def interface_capture(surface,player_image):
-    balle = Balle("images/pokeball.png", (100, HEIGHT - 400))
+    start_pos = (100, HEIGHT - 100)
+    balle = Balle("images/pokeball.png", start_pos)
     pokemons = {
         "carapuce": carapuce,
         "darkrai" : darkrai,
@@ -183,18 +209,9 @@ def interface_capture(surface,player_image):
     # préparer l’image du joueur passée en paramètre
     player_img = pygame.transform.scale(player_image, (60, 60))
     player_pos = (balle.start_pos[0] - 70, balle.start_pos[1])
-    # fonction interne pour dessiner l'inventaire
-    def draw_inventory(surface):
-        total_w = INVENTORY_SLOTS * SLOT_SIZE + (INVENTORY_SLOTS - 1) * SLOT_MARGIN
-        start_x = SLOT_MARGIN
-        y = HEIGHT - SLOT_SIZE - SLOT_MARGIN
-        for i in range(INVENTORY_SLOTS):
-            x = start_x + i * (SLOT_SIZE + SLOT_MARGIN)
-            pygame.draw.rect(surface, (200, 200, 200), (x, y, SLOT_SIZE, SLOT_SIZE), 2)
-            if i < len(inventory):
-                img = pygame.transform.scale(inventory[i], (SLOT_SIZE - 4, SLOT_SIZE - 4))
-                surface.blit(img, (x + 2, y + 2))
     clock = pygame.time.Clock()
+    inventory_visible = False
+    attempt_count = 0
     running = True
 
     while running:
@@ -202,7 +219,9 @@ def interface_capture(surface,player_image):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_i:
+                    inventory_visible = not inventory_visible
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return  # quitter le mini-jeu
@@ -212,12 +231,26 @@ def interface_capture(surface,player_image):
                 chargeur.power = 0
 
             elif event.type == pygame.MOUSEBUTTONUP and chargeur.charging:
+                attempt_count += 1
                 balle.set_velocity(chargeur.power, pygame.mouse.get_pos())
                 chargeur.reset()
                 cible.hit = False
 
         surface.blit(fond, (0, 0))
-        draw_inventory(surface)
+        if inventory_visible:
+            draw_inventory(surface)
+        if not balle.fired and chargeur.charging:
+            start = balle.start_pos
+            end = pygame.mouse.get_pos()
+            pygame.draw.line(surface, (255, 0, 0), start, end, 2)
+            # calcul de la tête de flèche
+            theta = math.atan2(end[1] - start[1], end[0] - start[0])
+            arrow_len = 15
+            back = (end[0] - arrow_len * math.cos(theta), end[1] - arrow_len * math.sin(theta))
+            head_size = 8
+            left = (back[0] + head_size * math.sin(theta), back[1] - head_size * math.cos(theta))
+            right = (back[0] - head_size * math.sin(theta), back[1] + head_size * math.cos(theta))
+            pygame.draw.polygon(surface, (255, 0, 0), [end, left, right])
         chargeur.update()
         chargeur.draw(surface)
         cible.update()
@@ -234,8 +267,10 @@ def interface_capture(surface,player_image):
             # stocker l'image de la cible si place dispo
             if len(inventory) < INVENTORY_SLOTS:
                 inventory.append(pokemons[random_key])
-            balle.reset((100, HEIGHT - 100))
+            balle.reset(start_pos)
             return  # quitte le mini-jeu et revient à la scène précédente
+        if not balle.fired and attempt_count >= 5 and not cible.hit:
+            return
         pygame.display.flip()
         clock.tick(60)
 
