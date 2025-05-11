@@ -307,7 +307,7 @@ def interface_capture(surface,player_image):
         counter_surf = font_counter.render(f"x {essais_restants}", True, (0, 0, 0))
         surface.blit(counter_surf, (35, 12))
         if inventory_visible:
-            draw_inventory(surface)
+            draw_inventory(surface,False)
         if not balle.fired and chargeur.charging:
             start = balle.start_pos
             end = pygame.mouse.get_pos()
