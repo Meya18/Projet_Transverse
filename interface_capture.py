@@ -1,12 +1,13 @@
 import pygame
 import math
+from music import *
 import random
 from load_image import *
 
 # Constantes
 WIDTH, HEIGHT = 1000, 600
 BALL_RADIUS = 10
-TARGET_RADIUS = 30
+TARGET_RADIUS = 55
 GRAVITY = 25
 POWER_MAX = 20
 SPEED_FACTOR = 5  # Vitesse d'affichage de la trajectoire
@@ -16,6 +17,7 @@ INVENTORY_PANEL_HEIGHT = 150
 INVENTORY_SLOTS = 6
 SLOT_SIZE = 20
 SLOT_MARGIN = 10
+music_manager = MusicManager()
 panel_img = None
 panel_w = panel_h = 0
 panel_pos = (0, 0)
@@ -205,7 +207,7 @@ def interface_capture(surface,player_image):
     random_key = random.choice(list(pokemons.keys()))
     cible = Cible(pokemons[random_key], (800, 400))
     chargeur = Chargeur()
-    fond = pygame.transform.scale(pygame.image.load("images/fond_combat.jpg").convert(), (WIDTH, HEIGHT))
+    fond = fond_capture
     # préparer l’image du joueur passée en paramètre
     player_img = pygame.transform.scale(player_image, (60, 60))
     player_pos = (balle.start_pos[0] - 70, balle.start_pos[1])
@@ -215,6 +217,7 @@ def interface_capture(surface,player_image):
     running = True
 
     while running:
+        music_manager.set_etat("combat")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -268,8 +271,10 @@ def interface_capture(surface,player_image):
             if len(inventory) < INVENTORY_SLOTS:
                 inventory.append(pokemons[random_key])
             balle.reset(start_pos)
+            music_manager.set_etat("jeu")
             return  # quitte le mini-jeu et revient à la scène précédente
         if not balle.fired and attempt_count >= 5 and not cible.hit:
+            music_manager.set_etat("jeu")
             return
         pygame.display.flip()
         clock.tick(60)

@@ -10,7 +10,7 @@ from scene_choix_perso import *
 from scene_maison1 import *
 from scene_maison2 import *
 from scene_laboratoire import *
-
+from debug import *
 
 pygame.init()
 
@@ -114,7 +114,8 @@ scenes = {
     "maison1": {"fond": maison1, "persos": persos},
     "maison2": {"fond": maison2, "persos": persos},
     "etage": {"fond": etage, "persos": persos},
-    "laboratoire": {"fond": laboratoire, "persos": persos}
+    "laboratoire": {"fond": laboratoire, "persos": persos},
+"fond_victoire": {"fond": fond_victoire, "persos": persos},
 }
 
 current_scene = "debut"
@@ -151,7 +152,7 @@ while running:
         total_s = victory_time_ms // 1000
         minutes = total_s // 60
         seconds = total_s % 60
-        screen.fill((255, 255, 255))
+        screen.blit(scenes["fond_victoire"]["fond"], (0, 0))
         draw_inventory(screen)
         timer_text = f"Temps de jeu : {minutes}m{seconds}s"
         timer_surf = font_nom.render(timer_text, True, (0, 0, 0))
@@ -159,8 +160,8 @@ while running:
         screen.blit(timer_surf, timer_rect)
         pygame.display.flip()
         continue
-    screen.fill((255, 255, 255))
-
+    screen.blit(scenes["fond_victoire"]["fond"], (0, 0))
+    music_manager.set_etat("fin")
 
     if current_scene == "debut":
         bouton_scale = afficher_scene_debut(screen, scenes, button_rect, bouton_debut, bouton_scale)
@@ -172,6 +173,7 @@ while running:
         dimensions_perso = 30
         music_manager.set_etat("jeu")
         deplacer_joueur(obstacles, player, dimensions_perso)
+        trace(POSITION, f"x: {player['x']}, y: {player['y']}")
 
         screen.blit(scenes["jeu"]["fond"], (0, 0))
 
@@ -179,22 +181,24 @@ while running:
             player["x"], player["y"] = 400, 560
             current_scene = "fond2"
 
-        if passage_rect[1].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+        elif passage_rect[1].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
             player["x"], player["y"] = 290, 510
             current_scene = "maison1"
 
-        if passage_rect[2].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+        elif passage_rect[2].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
             player["x"], player["y"] = 400, 540
             current_scene = "maison2"
 
-        if passage_rect[3].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
+        elif passage_rect[3].colliderect(pygame.Rect(player["x"], player["y"], dimensions_perso, dimensions_perso)):
             player["x"], player["y"] = 440, 530
             current_scene = "laboratoire"
 
-        if player["image"]:
+        elif player["image"]:
             resized_image = get_resized_player_image(player["image"], dimensions_perso)
             screen.blit(resized_image, (player["x"], player["y"]))
-
+    elif current_scene == "laboratoire":
+        dimensions_perso = 50
+        current_scene = afficher_scene_laboratoire(screen, scenes["laboratoire"]["fond"], player, dimensions_perso)
 
 
     elif current_scene == "maison1":
