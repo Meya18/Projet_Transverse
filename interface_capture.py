@@ -16,7 +16,7 @@ inventory = []
 INVENTORY_PANEL_HEIGHT = 150
 INVENTORY_SLOTS = 6
 SLOT_SIZE = 20
-SLOT_MARGIN = 10
+SLOT_MARGIN = 50
 music_manager = MusicManager()
 panel_img = None
 panel_w = panel_h = 0
@@ -181,7 +181,7 @@ class Chargeur:
     def reset(self):
         self.charging = False
         self.power = 0
-def draw_inventory(surface):
+def draw_inventory(surface, final):
     global panel_img, panel_w, panel_h, panel_pos
     if panel_img is None:
         raw = pygame.image.load("images/inventaire.png").convert_alpha()
@@ -189,10 +189,13 @@ def draw_inventory(surface):
         panel_w = WIDTH - 2 * SLOT_MARGIN
         panel_h = int(rh * panel_w / rw)
         panel_img = pygame.transform.scale(raw, (panel_w, panel_h))
-        panel_pos = (SLOT_MARGIN, HEIGHT - panel_h + 200)
+        y_offset = 0
+        if final:
+            y_offset = 150
+        panel_pos = (SLOT_MARGIN, HEIGHT - panel_h + 200 + y_offset)
     surface.blit(panel_img, panel_pos)
     border = 10
-    slot_w = (panel_w - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS
+    slot_w = (panel_w - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS - 12
     slot_h = panel_h - 2 * border
     max_icon_size = int(min(slot_w, slot_h) * 0.9)
 
@@ -207,12 +210,47 @@ def draw_inventory(surface):
             new_w = int(w * new_h / h)
 
         scaled_img = pygame.transform.smoothscale(slot, (new_w, new_h))
-        x = panel_pos[0] + border + i * (slot_w + border) + (slot_w - new_w) // 2
-        y = panel_pos[1] + border + (slot_h - new_h) // 2
+        x = panel_pos[0] + border + i * (slot_w + border) + (slot_w - new_w) // 2 + 35-i
+        y = panel_pos[1] + border + (slot_h - new_h) // 2 - 35-i
+        surface.blit(scaled_img, (x, y))
+
+def draw_inventory_final(surface, final):
+    global panel_img, panel_w, panel_h, panel_pos
+    if panel_img is None:
+        raw = pygame.image.load("images/inventaire.png").convert_alpha()
+        rw, rh = raw.get_size()
+        panel_w = WIDTH - 2 * SLOT_MARGIN
+        panel_h = int(rh * panel_w / rw)
+        panel_img = pygame.transform.scale(raw, (panel_w, panel_h))
+        y_offset = 0
+        if final:
+            y_offset = 150
+        panel_pos = (SLOT_MARGIN, HEIGHT - panel_h + 200 + +150)
+    surface.blit(panel_img, panel_pos)
+    border = 10
+    slot_w = (panel_w - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS - 12
+    slot_h = panel_h - 2 * border
+    max_icon_size = int(min(slot_w, slot_h) * 0.9)
+
+    for i, slot in enumerate(inventory):
+        img_rect = slot.get_rect()
+        w, h = img_rect.size
+        if w > h:
+            new_w = max_icon_size
+            new_h = int(h * new_w / w)
+        else:
+            new_h = max_icon_size
+            new_w = int(w * new_h / h)
+
+        scaled_img = pygame.transform.smoothscale(slot, (new_w, new_h))
+        x = panel_pos[0] + border + i * (slot_w + border) + (slot_w - new_w) // 2 + 35-i
+        y = panel_pos[1] + border + (slot_h - new_h) // 2 - 35-i
         surface.blit(scaled_img, (x, y))
 def interface_capture(surface,player_image):
     start_pos = (100, HEIGHT - 100)
     balle = Balle("images/pokeball.png", start_pos)
+    ball_icon = pygame.transform.scale(pygame.image.load("images/pokeball.png").convert_alpha(),(20, 20))
+    font_counter = pygame.font.SysFont("Arial", 24)
     pokemons = {
         "carapuce": carapuce,
         "darkrai" : darkrai,
@@ -264,6 +302,10 @@ def interface_capture(surface,player_image):
                 cible.hit = False
 
         surface.blit(fond, (0, 0))
+        essais_restants = max(0, 5 - attempt_count)
+        surface.blit(ball_icon, (10, 10))
+        counter_surf = font_counter.render(f"x {essais_restants}", True, (0, 0, 0))
+        surface.blit(counter_surf, (35, 12))
         if inventory_visible:
             draw_inventory(surface)
         if not balle.fired and chargeur.charging:

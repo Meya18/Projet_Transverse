@@ -1,6 +1,6 @@
 #import
 import pygame
-from interface_capture import interface_capture, draw_inventory, inventory, INVENTORY_SLOTS, WIDTH, HEIGHT
+from interface_capture import interface_capture, draw_inventory,draw_inventory_final, inventory, INVENTORY_SLOTS, WIDTH, HEIGHT
 from music import MusicManager
 from obstacles import *
 from load_image import *
@@ -106,7 +106,6 @@ def afficher_dialogue(screen, font, phrase, texte_actuel, dialogue_rect):
 def get_resized_player_image(player_image, size):
     return pygame.transform.scale(player_image, (size, size))
 
-
 # Scènes
 scenes = {
     "debut": {"fond": debut_image, "bouton": bouton_debut},
@@ -151,12 +150,13 @@ while running:
         if not game_won:
             victory_time_ms = pygame.time.get_ticks() - game_start_ticks
             game_won = True
+            inventory_visible = False
         total_s = victory_time_ms // 1000
         minutes = total_s // 60
         seconds = total_s % 60
         screen.blit(scenes["fond_victoire"]["fond"], (0, 0))
         music_manager.set_etat("fin")
-        draw_inventory(screen)
+        draw_inventory_final(screen,game_won)
         timer_text = f"Temps de jeu : {minutes}m{seconds}s"
         timer_surf = font_nom.render(timer_text, True, (0, 0, 0))
         timer_rect = timer_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2))
@@ -273,8 +273,10 @@ while running:
         if player["image"]:
             resized_image = get_resized_player_image(player["image"], dimensions_perso)
             screen.blit(resized_image, (player["x"], player["y"]))
-    if (inventory_visible or game_won):
-        draw_inventory(screen)
+    if not len(inventory) >= INVENTORY_SLOTS:
+        if (inventory_visible):
+            draw_inventory(screen,False)
+
 
     pygame.display.flip()
     clock.tick(60)
