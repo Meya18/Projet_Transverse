@@ -339,11 +339,33 @@ def interface_capture(surface,player_image):
             if len(inventory) < INVENTORY_SLOTS:
                 inventory.append(pokemons[random_key])
             balle.reset(start_pos)
-            music_manager.set_etat("jeu")
-            return  # quitte le mini-jeu et revient à la scène précédente
-        if not balle.fired and attempt_count >= 5 and not cible.hit:
+
+            font = pygame.font.SysFont("Arial", 72)
+            message = f"Tu as capturé {random_key.capitalize()} !"
+            text_surf = font.render(message, True, (0, 0, 0))
+
+            surface.blit(fond, (0, 0))
+            surface.blit(text_surf, text_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+            pygame.display.flip()
+            pygame.time.wait(2000)
+
             music_manager.set_etat("jeu")
             return
+
+        if not balle.fired and attempt_count >= 5 and not cible.hit:
+
+            font = pygame.font.SysFont("Arial", 72)
+            message = "Le Pokémon s'est enfui..."
+            text_surf = font.render(message, True, (0, 0, 0))
+
+            surface.blit(fond, (0, 0))  # Réaffiche le fond
+            surface.blit(text_surf, text_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+            pygame.display.flip()
+            pygame.time.wait(2000)
+
+            music_manager.set_etat("jeu")
+            return
+
         pygame.display.flip()
         clock.tick(60)
 

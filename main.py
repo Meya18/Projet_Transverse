@@ -264,7 +264,6 @@ while running:
             player["x"], player["y"] = 530, 30
             current_scene = "jeu"
 
-        # ne lancer le mini-jeu qu’une seule fois à l’entrée
         colliding = (0 <= player["x"] <= 970 and 0 <= player["y"] <= 570 and any(player_rect.colliderect(obs) for obs in capture_fond2))
         if colliding and not capture_cooldown:
             music_manager.set_etat("combat")
