@@ -154,6 +154,7 @@ while running:
         minutes = total_s // 60
         seconds = total_s % 60
         screen.blit(scenes["fond_victoire"]["fond"], (0, 0))
+        music_manager.set_etat("fin")
         draw_inventory(screen)
         timer_text = f"Temps de jeu : {minutes}m{seconds}s"
         timer_surf = font_nom.render(timer_text, True, (0, 0, 0))
@@ -161,8 +162,7 @@ while running:
         screen.blit(timer_surf, timer_rect)
         pygame.display.flip()
         continue
-    screen.blit(scenes["fond_victoire"]["fond"], (0, 0))
-    music_manager.set_etat("fin")
+
 
     if current_scene == "debut":
         bouton_scale = afficher_scene_debut(screen, scenes, button_rect, bouton_debut, bouton_scale)
