@@ -222,12 +222,12 @@ def draw_inventory_final(surface, final):
         raw = pygame.image.load("images/inventaire.png").convert_alpha()
         rw, rh = raw.get_size()
         panel_w2 = WIDTH - 2 * SLOT_MARGIN
-        panel_h2 = int(rh * panel_w / rw)
+        panel_h2 = int(rh * panel_w2 / rw)
         panel_img2 = pygame.transform.scale(raw, (panel_w2, panel_h2))
         y_offset = 0
         if final:
             y_offset = 150
-        panel_pos2 = (SLOT_MARGIN, HEIGHT - panel_h + 200 + 150)
+        panel_pos2 = (SLOT_MARGIN, HEIGHT - panel_h2 + 200 + 150)
     surface.blit(panel_img2, panel_pos2)
     border = 10
     slot_w = (panel_w2 - border * (INVENTORY_SLOTS + 1)) / INVENTORY_SLOTS - 12
